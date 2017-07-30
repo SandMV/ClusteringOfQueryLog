@@ -6,12 +6,12 @@ public class Algo {
 
     // bipartite weighted graph
     // groups describe query clusters and document clusters respectively
-    Set<Cluster<Query, Document>> queryClusters;
-    Set<Cluster<Document, Query>> documentClusters;
+    private Set<Cluster<Query, Document>> queryClusters;
+    private Set<Cluster<Document, Query>> documentClusters;
 
     // distances
-    IDistanceMatrix<Cluster<Query, Document>> distancesBetweenQueries;
-    IDistanceMatrix<Cluster<Document, Query>> distancesBetweenDocuments;
+    private IDistanceMatrix<Cluster<Query, Document>> distancesBetweenQueries;
+    private IDistanceMatrix<Cluster<Document, Query>> distancesBetweenDocuments;
 
     public Algo() {
         queryClusters = new HashSet<>();
@@ -65,12 +65,13 @@ public class Algo {
         return distances;
     }
 
-    private <CType, NType> double computeDistanceBetweenClusters
-            (Cluster<CType, NType> c1, Cluster<CType, NType> c2) {
-        Set<Cluster<NType, CType>> neighC1 = c1.getNeighbours();
-        Set<Cluster<NType, CType>> neighC2 = c2.getNeighbours();
+    private <CType, NType> double
+    computeDistanceBetweenClusters(Cluster<CType, NType> firstCluster,
+                                   Cluster<CType, NType> secondCluster) {
+        Set<Cluster<NType, CType>> neighC1 = firstCluster.getNeighbours();
+        Set<Cluster<NType, CType>> neighC2 = secondCluster.getNeighbours();
         long commonLinksCount = 0;
-        long totalCountOfLinks = c1.totalCountOfLinks + c2.totalCountOfLinks;
+        long totalCountOfLinks = firstCluster.totalCountOfLinks + secondCluster.totalCountOfLinks;
 
         // handle possible divide by zero exc
         if (totalCountOfLinks == 0) {
@@ -80,8 +81,8 @@ public class Algo {
         // cluster should be smallest in terms of count of neighbours
         for (Cluster<NType, CType> c : neighC1) {
             if (neighC2.contains(c)) {
-                commonLinksCount += c.getLinksCountToNeighbour(c1);
-                commonLinksCount += c.getLinksCountToNeighbour(c2);
+                commonLinksCount += c.getLinksCountToNeighbour(firstCluster);
+                commonLinksCount += c.getLinksCountToNeighbour(secondCluster);
             }
         }
         return commonLinksCount / totalCountOfLinks;
@@ -98,25 +99,25 @@ public class Algo {
     }
 
     private <CType, NType> void
-    updateGraphOnMerge(Cluster<CType, NType> c1,
-                       Cluster<CType, NType> c2,
+    updateGraphOnMerge(Cluster<CType, NType> firstCluster,
+                       Cluster<CType, NType> secondCluster,
                        Cluster<CType, NType> mergeResult,
                        Set<Cluster<CType, NType>> clusterSet) {
-        for (Cluster<NType, CType> n : c1.getNeighbours()) {
+        for (Cluster<NType, CType> n : firstCluster.getNeighbours()) {
             int linksCount = mergeResult.getLinksCountToNeighbour(n);
             n.addNeighbour(mergeResult, linksCount);
-            n.deleteNeighbour(c1);
+            n.deleteNeighbour(firstCluster);
         }
 
-        for (Cluster<NType, CType> n : c2.getNeighbours()) {
+        for (Cluster<NType, CType> n : secondCluster.getNeighbours()) {
             int linksCount = mergeResult.getLinksCountToNeighbour(n);
             n.addNeighbour(mergeResult, linksCount);
-            n.deleteNeighbour(c2);
+            n.deleteNeighbour(secondCluster);
         }
 
         clusterSet.add(mergeResult);
-        clusterSet.remove(c1);
-        clusterSet.remove(c2);
+        clusterSet.remove(firstCluster);
+        clusterSet.remove(secondCluster);
     }
 
     private <CType, NType> void
