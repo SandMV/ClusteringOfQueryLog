@@ -1,3 +1,5 @@
+import com.sun.xml.internal.bind.v2.model.core.ID;
+
 import java.util.*;
 
 public class Algo {
@@ -95,16 +97,77 @@ public class Algo {
         return siblings;
     }
 
+    private <CType, NType> void
+    updateGraphOnMerge(Cluster<CType, NType> c1,
+                       Cluster<CType, NType> c2,
+                       Cluster<CType, NType> mergeResult,
+                       Set<Cluster<CType, NType>> clusterSet) {
+        for (Cluster<NType, CType> n : c1.getNeighbours()) {
+            int linksCount = mergeResult.getLinksCountToNeighbour(n);
+            n.addNeighbour(mergeResult, linksCount);
+            n.deleteNeighbour(c1);
+        }
+
+        for (Cluster<NType, CType> n : c2.getNeighbours()) {
+            int linksCount = mergeResult.getLinksCountToNeighbour(n);
+            n.addNeighbour(mergeResult, linksCount);
+            n.deleteNeighbour(c2);
+        }
+
+        clusterSet.add(mergeResult);
+        clusterSet.remove(c1);
+        clusterSet.remove(c2);
+    }
+
+    private <CType, NType> void
+    updateDistanceOnMerge(Cluster<CType, NType> c1,
+                          Cluster<CType, NType> c2,
+                          Cluster<CType, NType> mergerResult,
+                          IDistanceMatrix<Cluster<CType, NType>> siblingsDistance,
+                          IDistanceMatrix<Cluster<NType, CType>> neighbourDistance) {
+        siblingsDistance.deleteRow(c1);
+        siblingsDistance.deleteRow(c2);
+
+        updateDistanceBetweenClusterAndSiblings(mergerResult,
+                getSiblings(mergerResult),
+                siblingsDistance);
+
+        updateDistancesForSubsetOfClusters(mergerResult.getNeighbours(), neighbourDistance);
+    }
+
+    private <CType, NType> void
+    updateDistanceBetweenClusterAndSiblings(Cluster<CType, NType> cluster,
+                                            Set<Cluster<CType, NType>> siblings,
+                                            IDistanceMatrix<Cluster<CType, NType>> distances) {
+        for(Cluster<CType, NType> sibling : siblings) {
+            double distance = computeDistanceBetweenClusters(cluster, sibling);
+            distances.addDistance(cluster, sibling, distance);
+        }
+    }
+
+    private <CType, NType> void
+    updateDistancesForSubsetOfClusters(Set<Cluster<CType, NType>> subset,
+                                       IDistanceMatrix<Cluster<CType, NType>> distances) {
+        Set<Cluster<CType, NType>> restOfTheClusters = new HashSet<>(subset);
+        for (Cluster<CType, NType> cluster : subset) {
+            restOfTheClusters.remove(cluster);
+            for (Cluster<CType, NType> sibling : restOfTheClusters) {
+                double distance = computeDistanceBetweenClusters(cluster, sibling);
+                distances.addDistance(cluster, sibling, distance);
+            }
+        }
+    }
+
     /**
      * describes the cluster which is also node in bipartite graph
      *
      * @param <CType> is the type of elements which are stored in current cluster
-     * @param <NType> is the type of elements which are stored in newighbour cluster
+     * @param <NType> is the type of elements which are stored in neighbour cluster
      */
-    class Cluster<CType, NType> {
-        Set<CType> clusteredElements;
-        HashMap<Cluster<NType, CType>, Integer> neighbours;
-        long totalCountOfLinks;
+    static class Cluster<CType, NType> {
+        private Set<CType> clusteredElements;
+        private HashMap<Cluster<NType, CType>, Integer> neighbours;
+        private long totalCountOfLinks;
 
         private Cluster() {
             totalCountOfLinks = 0;
@@ -122,13 +185,39 @@ public class Algo {
             clusteredElements.addAll(elements);
         }
 
-        void addNeighbour(Cluster<NType, CType> c, int weight)
+        static <CType, NType> Cluster<CType, NType>
+        mergeClusters(Cluster<CType, NType> c1, Cluster<CType, NType> c2) {
+            Set<CType> newSetOfClusteredElements = new HashSet<>();
+            newSetOfClusteredElements.addAll(c1.clusteredElements);
+            newSetOfClusteredElements.addAll(c2.clusteredElements);
+            HashMap<Cluster<NType, CType>, Integer> newNeighbours = new HashMap<>(c1.neighbours);
+
+            for (Map.Entry<Cluster<NType, CType>, Integer> c2Neighbour : c2.neighbours.entrySet()) {
+                int newLinksCount = c2Neighbour.getValue();
+                newLinksCount += newNeighbours.getOrDefault(c2Neighbour.getKey(), 0);
+                newNeighbours.put(c2Neighbour.getKey(), newLinksCount);
+            }
+
+            Cluster<CType, NType> newMergedCluster = new Cluster<>();
+            newMergedCluster.clusteredElements = newSetOfClusteredElements;
+            newMergedCluster.neighbours = newNeighbours;
+            newMergedCluster.totalCountOfLinks = c1.totalCountOfLinks + c2.totalCountOfLinks;
+            return newMergedCluster;
+        }
+
+        void addNeighbour(Cluster<NType, CType> c, int linksCount)
                 throws IllegalArgumentException {
-            if (weight < 0) {
+            if (linksCount < 0) {
                 throw new IllegalArgumentException("weight must be greater or equal to zero");
             }
-            neighbours.put(c, weight);
-            totalCountOfLinks += weight;
+            Integer oldLinksCount = neighbours.put(c, linksCount);
+            totalCountOfLinks -= oldLinksCount == null ? 0 : oldLinksCount;
+            totalCountOfLinks += linksCount;
+        }
+
+        int deleteNeighbour(Cluster<NType, CType> neighbour) {
+            Integer linksCount = neighbours.remove(neighbour);
+            return linksCount == null ? 0 : linksCount;
         }
 
         int getLinksCountToNeighbour(Cluster<NType, CType> neighbour) {
@@ -143,10 +232,8 @@ public class Algo {
             return Collections.unmodifiableSet(neighbours.keySet());
         }
 
-        Cluster<CType, NType> mergeWith(Cluster<CType, NType> other) {
-            Set<CType> mergedElements = new HashSet<>(clusteredElements);
-            mergedElements.addAll(other.clusteredElements);
-            return new Cluster<>(mergedElements);
+        Set<CType> getClusteredElements() {
+            return Collections.unmodifiableSet(clusteredElements);
         }
     }
 }

@@ -4,12 +4,12 @@
 import java.util.*;
 public class Main {
     public static void main(String[] args) {
-        Set<Integer> set = new HashSet<>();
-        set.add(1); set.add(2); set.add(3);
-        Set<Integer> unmodifiableSet = Collections.unmodifiableSet(set);
-        Set<Integer> anotherSet = new HashSet<>();
-        anotherSet.add(2); anotherSet.add(3); anotherSet.add(4);
-        String result = unmodifiableSet.retainAll(anotherSet) ? "modified" : "not modified";
-        System.out.print(result);
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(10, 10);
+        removeFromMap(map, 1);
+    }
+
+    static <K> int removeFromMap(Map<K , Integer> map, K key) {
+        return map.remove(key);
     }
 }
