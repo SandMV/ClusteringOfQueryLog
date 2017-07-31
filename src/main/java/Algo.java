@@ -1,41 +1,83 @@
-import com.sun.xml.internal.bind.v2.model.core.ID;
-
 import java.util.*;
 
 public class Algo {
 
+    private double threshold = 0.1;
     // bipartite weighted graph
     // groups describe query clusters and document clusters respectively
     private Set<Cluster<Query, Document>> queryClusters;
     private Set<Cluster<Document, Query>> documentClusters;
 
     // distances
-    private IDistanceMatrix<Cluster<Query, Document>> distancesBetweenQueries;
-    private IDistanceMatrix<Cluster<Document, Query>> distancesBetweenDocuments;
+    private DistanceMatrix<Cluster<Query, Document>> distancesBetweenQueries;
+    private DistanceMatrix<Cluster<Document, Query>> distancesBetweenDocuments;
 
     public Algo() {
         queryClusters = new HashSet<>();
         documentClusters = new HashSet<>();
     }
 
-    public Set<Set<Query>> clusterQueries(Set<Query> qSet) {
-        return null;
+    public Set<Set<Query>> clusterQueries(Set<Query> queries) {
+        initState(queries);
+        runClustering(queryClusters, documentClusters, distancesBetweenQueries, distancesBetweenDocuments);
+
+        Set<Set<Query>> clusters = new HashSet<>();
+        for (Cluster<Query, Document> cluster : queryClusters) {
+            clusters.add(cluster.getClusteredElements());
+        }
+
+        return clusters;
+    }
+
+    private <CType, NType> void
+    runClustering(Set<Cluster<CType, NType>> currentClusters,
+                  Set<Cluster<NType, CType>> neighbourClusters,
+                  DistanceMatrix<Cluster<CType, NType>> currentDistances,
+                  DistanceMatrix<Cluster<NType, CType>> neighbourDistances) {
+        UnorderedPair<Cluster<CType, NType>> minPair = currentDistances.getPairWithMinDistance();
+        Cluster<CType, NType> firstCluster = minPair.getNotEqualTo(null);
+        Cluster<CType, NType> secondCluster = minPair.getNotEqualTo(firstCluster);
+
+        if (currentDistances.getDistance(firstCluster, secondCluster) > threshold) {
+            UnorderedPair<Cluster<NType, CType>> minPairNeigh = neighbourDistances.getPairWithMinDistance();
+            Cluster<NType, CType> firstClusterNeigh = minPairNeigh.getNotEqualTo(null);
+            Cluster<NType, CType> secondClusterNeigh = minPairNeigh.getNotEqualTo(firstClusterNeigh);
+
+            if (neighbourDistances.getDistance(firstClusterNeigh, secondClusterNeigh) > threshold) {
+                runClustering(neighbourClusters, currentClusters, neighbourDistances, currentDistances);
+            }
+
+            return;
+        }
+
+        Cluster<CType, NType> newMergedCluster = Cluster.mergeClusters(firstCluster, secondCluster);
+
+        updateGraphOnMerge(firstCluster, secondCluster, newMergedCluster, currentClusters);
+        updateDistanceOnMerge(firstCluster, secondCluster, newMergedCluster, currentDistances,
+                neighbourDistances);
+
+        runClustering(neighbourClusters, currentClusters, neighbourDistances, currentDistances);
+    }
+
+    private void initState(Set<Query> queries) {
+        buildGraph(queries);
+        initDistances();
     }
 
     private void buildGraph(Set<Query> queries) {
         Map<Query, Cluster<Query, Document>> tmpQueryClusters = new HashMap<>();
         Map<Document, Cluster<Document, Query>> tmpDocumentClusters = new HashMap<>();
         for (Query q : queries) {
-            Cluster<Query, Document> qCluster = new Cluster<>(q);
-            tmpQueryClusters.put(q, qCluster);
+            Cluster<Query, Document> queryCluster = new Cluster<>(q);
+            tmpQueryClusters.put(q, queryCluster);
             for (Document d : q.getRelatedDocuments()) {
                 if (!tmpDocumentClusters.containsKey(d)) {
                     tmpDocumentClusters.put(d, new Cluster<>(d));
                 }
-                Cluster<Document, Query> dCluster = tmpDocumentClusters.get(d);
+                Cluster<Document, Query> documentCluster = tmpDocumentClusters.get(d);
                 int weight = q.getLinksCount(d);
-                qCluster.addNeighbour(dCluster, weight);
-                dCluster.addNeighbour(qCluster, weight);
+                queryCluster.addNeighbour(documentCluster, weight);
+                documentCluster.addNeighbour(queryCluster, weight);
             }
         }
         queryClusters.addAll(tmpQueryClusters.values());
@@ -47,18 +89,17 @@ public class Algo {
         distancesBetweenQueries = createDistanceMatrixForSetOfClusters(queryClusters);
     }
 
-    private <CType, NType> IDistanceMatrix<Cluster<CType, NType>>
+    private <CType, NType> DistanceMatrix<Cluster<CType, NType>>
     createDistanceMatrixForSetOfClusters(Set<Cluster<CType, NType>> clusters) {
         Set<Cluster<CType, NType>> alreadyDone = new HashSet<>();
-        IDistanceMatrix<Cluster<CType, NType>> distances = new DistanceMatrix<>();
+        DistanceMatrix<Cluster<CType, NType>> distances = new DistanceMatrixImpl<>();
 
         for (Cluster<CType, NType> c : clusters) {
             alreadyDone.add(c);
             Set<Cluster<CType, NType>> siblings = getSiblings(c);
             for (Cluster<CType, NType> s : siblings) {
                 if (!alreadyDone.contains(s)) {
-                    double distance = computeDistanceBetweenClusters(c, s);
-                    distances.addDistance(c, s, distance);
+                    distances.addDistance(c, s, computeDistanceBetweenClusters(c, s));
                 }
             }
         }
@@ -98,6 +139,20 @@ public class Algo {
         return siblings;
     }
 
+    /**
+     * After two cluster were merged new cluster, which is merge result, must be added to the graph.
+     * To do this new links to the mergeResult should be added to its neighbours and old links which lead to
+     * two old clusters should be removed. Also these two cluster should be removed from corresponding set
+     *
+     * @param firstCluster
+     * @param secondCluster Should be mentioned that the order of fisrtCluster and secondCluster are passed to the method
+     *                      is not important
+     * @param mergeResult   cluster which is the result of merging firstCluster and secondCluster
+     * @param clusterSet    set of cluster which contains firstCluster and secondCluster and will contain
+     *                      mergeResult
+     * @param <CType>       type of elements which are stored in clusters
+     * @param <NType>       type of elements which are stored in neighbour clusters
+     */
     private <CType, NType> void
     updateGraphOnMerge(Cluster<CType, NType> firstCluster,
                        Cluster<CType, NType> secondCluster,
@@ -120,14 +175,29 @@ public class Algo {
         clusterSet.remove(secondCluster);
     }
 
+    /**
+     * We assume that mergeResult cluster already properly added to the graph. So, the next step is to update
+     * distances between some clusters. Obviously, we don't know distances from mergeResult, new cluster, to its
+     * siblings, also some distances between its neighbours have been changed. Method updates some values in
+     * appropriate distance matrices
+     *
+     * @param firstCluster
+     * @param secondCluster
+     * Should be mentioned that the order of first and second clusters is not important
+     * @param mergerResult      cluster which is the result of merging firstCluster and secondCluster
+     * @param siblingsDistance  distance between nodes of current part of the graph
+     * @param neighbourDistance distance between neighbour nodes
+     * @param <CType>           type of elements which are stored in clusters
+     * @param <NType>           type of elements which are stored in neighbour clusters
+     */
     private <CType, NType> void
-    updateDistanceOnMerge(Cluster<CType, NType> c1,
-                          Cluster<CType, NType> c2,
+    updateDistanceOnMerge(Cluster<CType, NType> firstCluster,
+                          Cluster<CType, NType> secondCluster,
                           Cluster<CType, NType> mergerResult,
-                          IDistanceMatrix<Cluster<CType, NType>> siblingsDistance,
-                          IDistanceMatrix<Cluster<NType, CType>> neighbourDistance) {
-        siblingsDistance.deleteRow(c1);
-        siblingsDistance.deleteRow(c2);
+                          DistanceMatrix<Cluster<CType, NType>> siblingsDistance,
+                          DistanceMatrix<Cluster<NType, CType>> neighbourDistance) {
+        siblingsDistance.deleteRow(firstCluster);
+        siblingsDistance.deleteRow(secondCluster);
 
         updateDistanceBetweenClusterAndSiblings(mergerResult,
                 getSiblings(mergerResult),
@@ -139,22 +209,29 @@ public class Algo {
     private <CType, NType> void
     updateDistanceBetweenClusterAndSiblings(Cluster<CType, NType> cluster,
                                             Set<Cluster<CType, NType>> siblings,
-                                            IDistanceMatrix<Cluster<CType, NType>> distances) {
-        for(Cluster<CType, NType> sibling : siblings) {
-            double distance = computeDistanceBetweenClusters(cluster, sibling);
-            distances.addDistance(cluster, sibling, distance);
+                                            DistanceMatrix<Cluster<CType, NType>> distances) {
+        for (Cluster<CType, NType> sibling : siblings) {
+            distances.addDistance(cluster, sibling, computeDistanceBetweenClusters(cluster, sibling));
         }
     }
 
+    /**
+     * This method recalculates distances only for clusters in the subset
+     *
+     * @param subset    of set of clusters: query clusters or document clusters
+     * @param distances is distance matrix which stores all distances between clusters of corresponding
+     *                  set of clusters
+     * @param <CType>   type of elements which are stored in clusters
+     * @param <NType>   type of elements which are stored in neighbour clusters
+     */
     private <CType, NType> void
     updateDistancesForSubsetOfClusters(Set<Cluster<CType, NType>> subset,
-                                       IDistanceMatrix<Cluster<CType, NType>> distances) {
+                                       DistanceMatrix<Cluster<CType, NType>> distances) {
         Set<Cluster<CType, NType>> restOfTheClusters = new HashSet<>(subset);
         for (Cluster<CType, NType> cluster : subset) {
             restOfTheClusters.remove(cluster);
             for (Cluster<CType, NType> sibling : restOfTheClusters) {
-                double distance = computeDistanceBetweenClusters(cluster, sibling);
-                distances.addDistance(cluster, sibling, distance);
+                distances.addDistance(cluster, sibling, computeDistanceBetweenClusters(cluster, sibling));
             }
         }
     }
@@ -206,8 +283,7 @@ public class Algo {
             return newMergedCluster;
         }
 
-        void addNeighbour(Cluster<NType, CType> c, int linksCount)
-                throws IllegalArgumentException {
+        void addNeighbour(Cluster<NType, CType> c, int linksCount) throws IllegalArgumentException {
             if (linksCount < 0) {
                 throw new IllegalArgumentException("weight must be greater or equal to zero");
             }

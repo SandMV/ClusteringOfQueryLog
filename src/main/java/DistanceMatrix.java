@@ -1,79 +1,60 @@
+/**
+ * Created by sandulmv on 29.07.17.
+ */
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
- * Created by sandulmv on 28.07.17.
+ * DistanceMatrixImpl stores distances between pairs of points of type T
+ * distances must be greater or equal to 0
+ * @param <T> determines the type of coordinates
  */
-public class DistanceMatrix<T> implements IDistanceMatrix<T>{
-    private HashMap<IUnorderedPair<T>, Double> distanceMatrix;
-    public DistanceMatrix() {
-        distanceMatrix = new HashMap<>();
-    }
+public interface DistanceMatrix<T> {
 
-    @Override
-    public double addDistance(T point1, T point2, double distance)
-            throws IllegalArgumentException {
-        if(distance < 0) throw new IllegalArgumentException("Distance shouldn't less then 0");
+    /**
+     * adds new distance to DistanceMatrixImpl associated with
+     * (point1, point2) unordered pair
+     * if such distance was already determined replaces it with the new value
+     * @param point1 is one of two coordinates with which distance will be associated
+     * @param point2 is one of two coordinates with which distance will be associated
+     * @param distance between point1 and point2
+     * @return old value associated with {point1, point2}, null otherwise
+     * @throws IllegalArgumentException if distance < 0
+     */
+    Double addDistance(T point1, T point2, double distance);
 
-        Double oldVal = distanceMatrix.put(new UnorderedPair<>(point1, point2), distance);
-        return oldVal == null ? -1 : oldVal;
-    }
+    /**
+     * removes distance from DistanceMatrixImpl which corresponding to
+     * (point1, point2) unordered pair
+     * @return distance between point1 and point2 if there was such, null otherwise
+     */
+    Double deleteDistance(T point1, T point2);
 
-    @Override
-    public double deleteDistance(T point1, T point2) {
-        Double val = distanceMatrix.remove(new UnorderedPair<>(point1, point2));
-        return val == null ? -1 : val;
-    }
+    /**
+     * @return true if there is such distance associated with (point1, point2)
+     * unordered pair, false otherwise
+     */
+    boolean containsDistance(T point1, T point2);
 
-    @Override
-    public Map<IUnorderedPair<T>, Double> deleteRow(T point) {
-        Set<IUnorderedPair<T>> rowKeys = distanceMatrix.keySet()
-                .stream()
-                .filter(tUnorderedPair -> tUnorderedPair.inPair(point))
-                .collect(Collectors.toSet());
-        Map<IUnorderedPair<T>, Double> row = new HashMap<>();
-        for(IUnorderedPair<T> key : rowKeys) {
-            row.put(key, distanceMatrix.remove(key));
-        }
-        return row;
-    }
+    /**
+     * @return distance associated with (point1, point2) unordered pair
+     * null otherwise
+     */
+    Double getDistance(T point1, T point2);
 
-    @Override
-    public double getDistance(T point1, T point2) {
-        Double val = distanceMatrix.get(new UnorderedPair<>(point1, point2));
-        return val == null ? -1 : val;
-    }
+    /**
+     * removes all values from DistanceMatrixImpl which coordinates include point
+     * @param point
+     * @return all deleted values: pairs and associated distances
+     */
+    Map<UnorderedPair<T>, Double> deleteRow(T point);
 
-    @Override
-    public boolean containsDistance(T point1, T point2) {
-        return distanceMatrix.containsKey(new UnorderedPair<>(point1, point2));
-    }
+    /**
+     * @return pair with which smallest distance is associated
+     */
+    UnorderedPair<T> getPairWithMinDistance();
 
-    @Override
-    public IUnorderedPair<T> getPairWithMinDistance() {
-        double minDistance = Double.MAX_VALUE;
-        IUnorderedPair<T> minPair = null;
-        for(Map.Entry<IUnorderedPair<T>, Double> entry : distanceMatrix.entrySet()) {
-            double distance = entry.getValue();
-            if(distance <= minDistance) {
-                minDistance = distance;
-                minPair = entry.getKey();
-            }
-        }
-        return minPair;
-    }
-
-    @Override
-    public IUnorderedPair<T> getPairWithMaxDistance() {
-        double maxDistance = Double.MIN_VALUE;
-        IUnorderedPair<T> minPair = null;
-        for(Map.Entry<IUnorderedPair<T>, Double> entry : distanceMatrix.entrySet()) {
-            double distance = entry.getValue();
-            if(distance >= maxDistance) {
-                maxDistance = distance;
-                minPair = entry.getKey();
-            }
-        }
-        return minPair;
-    }
+    /**
+     * @return pair with which largest distance is associated
+     */
+    UnorderedPair<T> getPairWithMaxDistance();
 }

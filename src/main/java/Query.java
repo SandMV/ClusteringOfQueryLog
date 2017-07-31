@@ -1,8 +1,9 @@
 /**
  * Created by sandulmv on 28.07.17.
  */
-import java.util.*;
-import java.util.stream.Stream;
+
+import java.util.HashMap;
+import java.util.Set;
 
 public class Query {
     private String query;
@@ -20,15 +21,20 @@ public class Query {
     public String toString() {
         return query;
     }
+
     @Override
     public boolean equals(Object other) {
-        if(!(other instanceof Query))
+        if (!(other instanceof Query)) {
             return false;
-        if(other == this) return true;
+        }
+        if (other == this) {
+            return true;
+        }
 
-        Query otherQuery = (Query)other;
+        Query otherQuery = (Query) other;
         return query.equals(otherQuery.query);
     }
+
     @Override
     public int hashCode() {
         return query.hashCode();
