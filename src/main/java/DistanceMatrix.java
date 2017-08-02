@@ -46,15 +46,17 @@ public interface DistanceMatrix<T> {
      * @param point
      * @return all deleted values: pairs and associated distances
      */
-    Map<UnorderedPair<T>, Double> deleteRow(T point);
+    Map<T, Double> deleteRow(T point);
 
     /**
-     * @return pair with which smallest distance is associated
+     * @return pair with which smallest distance is associated null if no distances stored
      */
     UnorderedPair<T> getPairWithMinDistance();
 
     /**
-     * @return pair with which largest distance is associated
+     * @return pair with which largest distance is associated null if no distances stored
      */
     UnorderedPair<T> getPairWithMaxDistance();
+
+    int size();
 }

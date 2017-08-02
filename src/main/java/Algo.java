@@ -1,6 +1,12 @@
+import sun.util.resources.cldr.de.CalendarData_de_LU;
+
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Algo {
+
+    private static final Logger ALGO_LOGGER = Logger.getLogger(Algo.class.getName());
 
     private double threshold = 0.1;
     // bipartite weighted graph
@@ -17,9 +23,25 @@ public class Algo {
         documentClusters = new HashSet<>();
     }
 
+    public double getThreshold() {
+        return threshold;
+    }
+
+    public void setThreshold(double threshold) {
+        if(threshold > 1 || threshold < 0) {
+            throw new IllegalArgumentException("Threshold value should belong to [0, 1]");
+        }
+        this.threshold = threshold;
+    }
+
     public Set<Set<Query>> clusterQueries(Set<Query> queries) {
         initState(queries);
-        runClustering(queryClusters, documentClusters, distancesBetweenQueries, distancesBetweenDocuments);
+        ALGO_LOGGER.log(Level.INFO, "Query clusters count: {0}", queryClusters.size());
+        ALGO_LOGGER.log(Level.INFO, "Document clusters count: {0}", documentClusters.size());
+        ALGO_LOGGER.log(Level.INFO, "Count of query distances: {0}", distancesBetweenQueries.size());
+        ALGO_LOGGER.log(Level.INFO, "Count of doc distances: {0}", distancesBetweenDocuments.size());
+
+        runClustering();
 
         Set<Set<Query>> clusters = new HashSet<>();
         for (Cluster<Query, Document> cluster : queryClusters) {
@@ -29,37 +51,40 @@ public class Algo {
         return clusters;
     }
 
-    private <CType, NType> void
-    runClustering(Set<Cluster<CType, NType>> currentClusters,
-                  Set<Cluster<NType, CType>> neighbourClusters,
-                  DistanceMatrix<Cluster<CType, NType>> currentDistances,
-                  DistanceMatrix<Cluster<NType, CType>> neighbourDistances) {
-        UnorderedPair<Cluster<CType, NType>> minPair = currentDistances.getPairWithMinDistance();
-        Cluster<CType, NType> firstCluster = minPair.getNotEqualTo(null);
-        Cluster<CType, NType> secondCluster = minPair.getNotEqualTo(firstCluster);
-
-        if (currentDistances.getDistance(firstCluster, secondCluster) > threshold) {
-            UnorderedPair<Cluster<NType, CType>> minPairNeigh = neighbourDistances.getPairWithMinDistance();
-            Cluster<NType, CType> firstClusterNeigh = minPairNeigh.getNotEqualTo(null);
-            Cluster<NType, CType> secondClusterNeigh = minPairNeigh.getNotEqualTo(firstClusterNeigh);
-
-            if (neighbourDistances.getDistance(firstClusterNeigh, secondClusterNeigh) > threshold) {
-                runClustering(neighbourClusters, currentClusters, neighbourDistances, currentDistances);
-            }
-
-            return;
+    private void runClustering() {
+        boolean canMergeClusters = true;
+        while (canMergeClusters) {
+            canMergeClusters = tryMerge(queryClusters, distancesBetweenQueries, distancesBetweenDocuments);
+            canMergeClusters |= tryMerge(documentClusters, distancesBetweenDocuments, distancesBetweenQueries);
         }
+    }
 
-        Cluster<CType, NType> newMergedCluster = Cluster.mergeClusters(firstCluster, secondCluster);
+    private <CType, NType> boolean tryMerge(Set<Cluster<CType, NType>> currentClusters,
+                                            DistanceMatrix<Cluster<CType, NType>> currentDistances,
+                                            DistanceMatrix<Cluster<NType, CType>> neighbourDistances) {
 
-        updateGraphOnMerge(firstCluster, secondCluster, newMergedCluster, currentClusters);
-        updateDistanceOnMerge(firstCluster, secondCluster, newMergedCluster, currentDistances,
-                neighbourDistances);
+        UnorderedPair<Cluster<CType, NType>> minDistanceDocPair =
+                currentDistances.getPairWithMinDistance();
+        if (minDistanceDocPair != null) {
+            Cluster<CType, NType> firstCluster = minDistanceDocPair.getNotEqualTo(null);
+            Cluster<CType, NType> secondCluster = minDistanceDocPair.getNotEqualTo(firstCluster);
 
-        runClustering(neighbourClusters, currentClusters, neighbourDistances, currentDistances);
+            Double distance = currentDistances.getDistance(firstCluster, secondCluster);
+            if (distance != null && distance < threshold) {
+                Cluster<CType, NType> newMergedCluster =
+                        Cluster.mergeClusters(firstCluster, secondCluster);
+                updateGraphOnMerge(firstCluster, secondCluster, newMergedCluster, currentClusters);
+                updateDistanceOnMerge(firstCluster, secondCluster, newMergedCluster,
+                        currentDistances, neighbourDistances);
+                return true;
+            }
+        }
+        return false;
     }
 
     private void initState(Set<Query> queries) {
+        queryClusters = new HashSet<>();
+        documentClusters = new HashSet<>();
         buildGraph(queries);
         initDistances();
     }
@@ -75,9 +100,9 @@ public class Algo {
                     tmpDocumentClusters.put(d, new Cluster<>(d));
                 }
                 Cluster<Document, Query> documentCluster = tmpDocumentClusters.get(d);
-                int weight = q.getLinksCount(d);
-                queryCluster.addNeighbour(documentCluster, weight);
-                documentCluster.addNeighbour(queryCluster, weight);
+                long linksCount = q.getLinksCount(d);
+                queryCluster.addNeighbour(documentCluster, linksCount);
+                documentCluster.addNeighbour(queryCluster, linksCount);
             }
         }
         queryClusters.addAll(tmpQueryClusters.values());
@@ -111,22 +136,34 @@ public class Algo {
                                    Cluster<CType, NType> secondCluster) {
         Set<Cluster<NType, CType>> neighC1 = firstCluster.getNeighbours();
         Set<Cluster<NType, CType>> neighC2 = secondCluster.getNeighbours();
-        long commonLinksCount = 0;
-        long totalCountOfLinks = firstCluster.totalCountOfLinks + secondCluster.totalCountOfLinks;
+        double commonLinksCount = 0;
+        double totalCountOfLinks = firstCluster.getTotalCountOfLinks() + secondCluster.getTotalCountOfLinks();
 
+        // possible overflow
+        if (totalCountOfLinks < 0) {
+            ALGO_LOGGER.log(Level.SEVERE, "Total count of links is below zero while computing distance" +
+                    " between cluster (possible overflow)", totalCountOfLinks);
+            throw new RuntimeException("Total count of links is below zero while computing distance " +
+                    "between cluster (possible overflow)");
+        }
         // handle possible divide by zero exc
         if (totalCountOfLinks == 0) {
             return 0;
         }
 
         // cluster should be smallest in terms of count of neighbours
+        if(neighC1.size() > neighC2.size()) {
+            Set swp = neighC2;
+            neighC2 = neighC1;
+            neighC1 = swp;
+        }
         for (Cluster<NType, CType> c : neighC1) {
             if (neighC2.contains(c)) {
                 commonLinksCount += c.getLinksCountToNeighbour(firstCluster);
                 commonLinksCount += c.getLinksCountToNeighbour(secondCluster);
             }
         }
-        return commonLinksCount / totalCountOfLinks;
+        return 1. - commonLinksCount / totalCountOfLinks;
     }
 
     private <CType, NType> Set<Cluster<CType, NType>>
@@ -159,13 +196,13 @@ public class Algo {
                        Cluster<CType, NType> mergeResult,
                        Set<Cluster<CType, NType>> clusterSet) {
         for (Cluster<NType, CType> n : firstCluster.getNeighbours()) {
-            int linksCount = mergeResult.getLinksCountToNeighbour(n);
+            long linksCount = mergeResult.getLinksCountToNeighbour(n);
             n.addNeighbour(mergeResult, linksCount);
             n.deleteNeighbour(firstCluster);
         }
 
         for (Cluster<NType, CType> n : secondCluster.getNeighbours()) {
-            int linksCount = mergeResult.getLinksCountToNeighbour(n);
+            long linksCount = mergeResult.getLinksCountToNeighbour(n);
             n.addNeighbour(mergeResult, linksCount);
             n.deleteNeighbour(secondCluster);
         }
@@ -182,9 +219,8 @@ public class Algo {
      * appropriate distance matrices
      *
      * @param firstCluster
-     * @param secondCluster
-     * Should be mentioned that the order of first and second clusters is not important
-     * @param mergerResult      cluster which is the result of merging firstCluster and secondCluster
+     * @param secondCluster     Should be mentioned that the order of first and second clusters is not important
+     * @param mergeResult      cluster which is the result of merging firstCluster and secondCluster
      * @param siblingsDistance  distance between nodes of current part of the graph
      * @param neighbourDistance distance between neighbour nodes
      * @param <CType>           type of elements which are stored in clusters
@@ -193,17 +229,32 @@ public class Algo {
     private <CType, NType> void
     updateDistanceOnMerge(Cluster<CType, NType> firstCluster,
                           Cluster<CType, NType> secondCluster,
-                          Cluster<CType, NType> mergerResult,
+                          Cluster<CType, NType> mergeResult,
                           DistanceMatrix<Cluster<CType, NType>> siblingsDistance,
                           DistanceMatrix<Cluster<NType, CType>> neighbourDistance) {
-        siblingsDistance.deleteRow(firstCluster);
-        siblingsDistance.deleteRow(secondCluster);
+        // deleteRow waaaay too inefficient
+        Map<Cluster<CType, NType>, Double> deletedDistances = siblingsDistance.deleteRow(firstCluster);
+        deletedDistances.putAll(siblingsDistance.deleteRow(secondCluster));
 
-        updateDistanceBetweenClusterAndSiblings(mergerResult,
-                getSiblings(mergerResult),
+        // for some siblings distance to mergeResult is equal to distance to first or second cluster
+        // no need to recalculate distance for them (count of common links is the same)
+        // only clusters who had firstCluster and secondCluster as siblings simultaneously now
+        // have new distance to mergeResult (obviously new count of common links)
+        Set<Cluster<CType, NType>> clustersNeedDistanceRecalculation = new HashSet<>(getSiblings(firstCluster));
+        clustersNeedDistanceRecalculation.retainAll(getSiblings(secondCluster));
+        updateDistanceBetweenClusterAndSiblings(mergeResult,
+                clustersNeedDistanceRecalculation,
                 siblingsDistance);
 
-        updateDistancesForSubsetOfClusters(mergerResult.getNeighbours(), neighbourDistance);
+        // Just rewrite old distances for the rest of clusters
+        for(Cluster<CType, NType> sibling : deletedDistances.keySet()) {
+            if(!clustersNeedDistanceRecalculation.contains(sibling)) {
+                siblingsDistance.addDistance(sibling, mergeResult, deletedDistances.get(sibling));
+            }
+        }
+
+
+        updateDistancesForSubsetOfClusters(mergeResult.getNeighbours(), neighbourDistance);
     }
 
     private <CType, NType> void
@@ -242,9 +293,10 @@ public class Algo {
      * @param <CType> is the type of elements which are stored in current cluster
      * @param <NType> is the type of elements which are stored in neighbour cluster
      */
-    static class Cluster<CType, NType> {
+    private static class Cluster<CType, NType> {
+        private static final Logger CLUSTER_LOGGER = Logger.getLogger(Cluster.class.getName());
         private Set<CType> clusteredElements;
-        private HashMap<Cluster<NType, CType>, Integer> neighbours;
+        private HashMap<Cluster<NType, CType>, Long> neighbours;
         private long totalCountOfLinks;
 
         private Cluster() {
@@ -268,11 +320,11 @@ public class Algo {
             Set<CType> newSetOfClusteredElements = new HashSet<>();
             newSetOfClusteredElements.addAll(c1.clusteredElements);
             newSetOfClusteredElements.addAll(c2.clusteredElements);
-            HashMap<Cluster<NType, CType>, Integer> newNeighbours = new HashMap<>(c1.neighbours);
+            HashMap<Cluster<NType, CType>, Long> newNeighbours = new HashMap<>(c1.neighbours);
 
-            for (Map.Entry<Cluster<NType, CType>, Integer> c2Neighbour : c2.neighbours.entrySet()) {
-                int newLinksCount = c2Neighbour.getValue();
-                newLinksCount += newNeighbours.getOrDefault(c2Neighbour.getKey(), 0);
+            for (Map.Entry<Cluster<NType, CType>, Long> c2Neighbour : c2.neighbours.entrySet()) {
+                long newLinksCount = c2Neighbour.getValue();
+                newLinksCount += newNeighbours.getOrDefault(c2Neighbour.getKey(), 0L);
                 newNeighbours.put(c2Neighbour.getKey(), newLinksCount);
             }
 
@@ -280,25 +332,40 @@ public class Algo {
             newMergedCluster.clusteredElements = newSetOfClusteredElements;
             newMergedCluster.neighbours = newNeighbours;
             newMergedCluster.totalCountOfLinks = c1.totalCountOfLinks + c2.totalCountOfLinks;
+
+            if (newMergedCluster.totalCountOfLinks < 0) {
+                CLUSTER_LOGGER.log(Level.SEVERE, "Total links count is below zero (possible overflow):",
+                        new Object[] {newMergedCluster.totalCountOfLinks});
+                throw new RuntimeException("Total links count is below zero (possible overflow)");
+            }
+
             return newMergedCluster;
         }
 
-        void addNeighbour(Cluster<NType, CType> c, int linksCount) throws IllegalArgumentException {
+        void addNeighbour(Cluster<NType, CType> c, long linksCount) throws IllegalArgumentException {
             if (linksCount < 0) {
                 throw new IllegalArgumentException("weight must be greater or equal to zero");
             }
-            Integer oldLinksCount = neighbours.put(c, linksCount);
+            Long oldLinksCount = neighbours.put(c, linksCount);
             totalCountOfLinks -= oldLinksCount == null ? 0 : oldLinksCount;
             totalCountOfLinks += linksCount;
+
+            if (totalCountOfLinks < 0) {
+                CLUSTER_LOGGER.log(Level.SEVERE,
+                        "In cluster. Total links count is below zero (possible overflow): {0}",
+                        totalCountOfLinks);
+                throw new RuntimeException("In cluster. ITotal links count is below zero (possible overflow)");
+            }
         }
 
-        int deleteNeighbour(Cluster<NType, CType> neighbour) {
-            Integer linksCount = neighbours.remove(neighbour);
+        long deleteNeighbour(Cluster<NType, CType> neighbour) {
+            Long linksCount = neighbours.remove(neighbour);
+            totalCountOfLinks -= linksCount == null ? 0 : linksCount;
             return linksCount == null ? 0 : linksCount;
         }
 
-        int getLinksCountToNeighbour(Cluster<NType, CType> neighbour) {
-            return neighbours.getOrDefault(neighbour, 0);
+        long getLinksCountToNeighbour(Cluster<NType, CType> neighbour) {
+            return neighbours.getOrDefault(neighbour, 0L);
         }
 
         long getTotalCountOfLinks() {
@@ -311,6 +378,21 @@ public class Algo {
 
         Set<CType> getClusteredElements() {
             return Collections.unmodifiableSet(clusteredElements);
+        }
+
+        @Override
+        public int hashCode() {
+            return clusteredElements.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (!(other instanceof Cluster)) {
+                return false;
+            }
+
+            Cluster otherCluster = (Cluster) other;
+            return clusteredElements.equals(otherCluster.clusteredElements);
         }
     }
 }

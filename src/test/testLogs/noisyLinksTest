@@ -1,0 +1,4 @@
+query1	document1	1000
+query2	document1	1000
+query2	document2	10
+query3	document2	10

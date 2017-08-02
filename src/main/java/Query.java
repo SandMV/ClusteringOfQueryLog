@@ -3,20 +3,34 @@
  */
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class Query {
     private String query;
-    private HashMap<Document, Integer> relatedDocuments;
+    private Map<Document, Long> relatedDocuments;
+
+    public Query(String query) {
+        this.query = query;
+        relatedDocuments = new HashMap<>();
+    }
 
     public Set<Document> getRelatedDocuments() {
         return relatedDocuments.keySet();
     }
 
-    public int getLinksCount(Document doc) {
-        return relatedDocuments.getOrDefault(doc, 0);
+    public long getLinksCount(Document doc) {
+        return relatedDocuments.getOrDefault(doc, 0L);
     }
 
+    public void addRelatedDocument(Document doc) {
+        addRelatedDocument(doc, 1);
+    }
+
+    public void addRelatedDocument(Document doc, long linksCount) {
+        long newLinksCount = relatedDocuments.getOrDefault(doc, 0L) + linksCount;
+        relatedDocuments.put(doc, newLinksCount);
+    }
     @Override
     public String toString() {
         return query;
