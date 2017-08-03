@@ -1,3 +1,4 @@
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -85,30 +86,28 @@ public class DistanceMatrixImpl<T> implements DistanceMatrix<T> {
 
     @Override
     public UnorderedPair<T> getPairWithMinDistance() {
-        double minDistance = Double.MAX_VALUE;
-        UnorderedPair<T> minPair = null;
-        for (Map.Entry<UnorderedPair<T>, Double> entry : distanceMatrix.entrySet()) {
-            double distance = entry.getValue();
-            if (distance <= minDistance) {
-                minDistance = distance;
-                minPair = entry.getKey();
-            }
+        if(distanceMatrix.size() == 0) {
+            return null;
         }
-        return minPair;
+        return distanceMatrix
+                .entrySet()
+                .stream()
+                .min(Comparator.comparingDouble(Map.Entry::getValue))
+                .get()
+                .getKey();
     }
 
     @Override
     public UnorderedPair<T> getPairWithMaxDistance() {
-        double maxDistance = Double.MIN_VALUE;
-        UnorderedPair<T> minPair = null;
-        for (Map.Entry<UnorderedPair<T>, Double> entry : distanceMatrix.entrySet()) {
-            double distance = entry.getValue();
-            if (distance >= maxDistance) {
-                maxDistance = distance;
-                minPair = entry.getKey();
-            }
+        if(distanceMatrix.size() == 0) {
+            return null;
         }
-        return minPair;
+        return distanceMatrix
+                .entrySet()
+                .stream()
+                .max(Comparator.comparingDouble(Map.Entry::getValue))
+                .get()
+                .getKey();
     }
 
     @Override
