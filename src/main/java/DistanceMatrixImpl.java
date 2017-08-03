@@ -91,7 +91,7 @@ public class DistanceMatrixImpl<T> implements DistanceMatrix<T> {
         }
         return distanceMatrix
                 .entrySet()
-                .stream()
+                .parallelStream()
                 .min(Comparator.comparingDouble(Map.Entry::getValue))
                 .get()
                 .getKey();
@@ -104,7 +104,7 @@ public class DistanceMatrixImpl<T> implements DistanceMatrix<T> {
         }
         return distanceMatrix
                 .entrySet()
-                .stream()
+                .parallelStream()
                 .max(Comparator.comparingDouble(Map.Entry::getValue))
                 .get()
                 .getKey();
