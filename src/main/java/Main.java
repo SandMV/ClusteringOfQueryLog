@@ -34,9 +34,4 @@ public class Main {
             }
         }
     }
-    private static void setupLogHandlers(String logFileName) throws IOException{
-        Logger algoLogger = Logger.getLogger(Algo.class.getName());
-        Handler loggerHandler = new FileHandler(pathToProgramLogs + logFileName);
-        algoLogger.addHandler(loggerHandler);
-    }
 }
