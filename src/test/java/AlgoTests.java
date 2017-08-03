@@ -6,12 +6,13 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.Assert;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 public class AlgoTests {
-    private final String testLogsDirectory = "/home/sandulmv/IdeaProjects/QueryClustering/src/test/testLogs/";
+    private final String testLogsDirectory = ".$src$test$testLogs$".replaceAll("\\$", File.separator);
     private final QueryTestLogReader input = new QueryTestLogReader();
 
     @Test
@@ -36,15 +37,6 @@ public class AlgoTests {
         Algo algo = new Algo();
         Set<Set<Query>> qClusters = algo.clusterQueries(queries);
         Assert.assertEquals(1, qClusters.size());
-    }
-
-    @Test
-    @Ignore
-    public void testNoisyLinks() throws IOException {
-        Set<Query> queries = input.readQueryLog(testLogsDirectory + "noisyLinksTest");
-        Algo algo = new Algo();
-        Set<Set<Query>> qClusters = algo.clusterQueries(queries);
-        Assert.assertEquals(2, qClusters.size());
     }
 
     @Test

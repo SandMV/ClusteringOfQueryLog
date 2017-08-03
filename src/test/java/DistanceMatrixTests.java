@@ -80,9 +80,8 @@ public class DistanceMatrixTests {
         Assert.assertNull(distanceMatrix.deleteDistance(points[0], points[2]));
         Assert.assertNull(distanceMatrix.deleteDistance(points[0], points[3]));
 
-        for (UnorderedPair p : deletedRow.keySet()) {
-            Assert.assertTrue(p.inPair(points[0]));
-            Assert.assertFalse(distanceMatrix.containsDistance(points[0], p.getNotEqualTo(points[0])));
+        for (Object p : deletedRow.keySet()) {
+            Assert.assertFalse(distanceMatrix.containsDistance(points[0], p));
         }
 
         deletedRow = distanceMatrix.deleteRow(points[0]);
