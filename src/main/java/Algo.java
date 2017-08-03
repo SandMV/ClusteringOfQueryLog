@@ -6,7 +6,7 @@ public class Algo {
 
     private static final Logger ALGO_LOGGER = Logger.getLogger(Algo.class.getName());
 
-    private double threshold = 0.5;
+    private double threshold = 0.01;
     // bipartite weighted graph
     // groups describe query clusters and document clusters respectively
     private Set<Cluster<Query, Document>> queryClusters;
@@ -34,6 +34,14 @@ public class Algo {
 
     public Set<Set<Query>> clusterQueries(Set<Query> queries) {
         initState(queries);
+
+        ALGO_LOGGER.log(Level.FINE, "Count of query clusters: {0}", queryClusters.size());
+        ALGO_LOGGER.log(Level.FINE, "Count of document clusters: {0}", documentClusters.size());
+        ALGO_LOGGER.log(Level.FINE, "Count of distances between query clusters: {0}",
+                distancesBetweenQueries.size());
+        ALGO_LOGGER.log(Level.FINE, "Count of distances between document clusters: {0}",
+                distancesBetweenDocuments.size());
+
         runClustering();
 
         Set<Set<Query>> clusters = new HashSet<>();
@@ -46,10 +54,16 @@ public class Algo {
 
     private void runClustering() {
         boolean canMergeClusters = true;
+        long iterCount = 0;
+        long startTime = System.nanoTime();
         while (canMergeClusters) {
+            ++iterCount;
             canMergeClusters = tryMerge(queryClusters, distancesBetweenQueries, distancesBetweenDocuments);
             canMergeClusters |= tryMerge(documentClusters, distancesBetweenDocuments, distancesBetweenQueries);
         }
+        long elapsedTime = System.nanoTime() - startTime;
+        ALGO_LOGGER.log(Level.FINE, "Time: {0}s", elapsedTime/1e9);
+        ALGO_LOGGER.log(Level.FINE, "Count of iterations: {0}", iterCount);
     }
 
     private <CType, NType> boolean tryMerge(Set<Cluster<CType, NType>> currentClusters,
@@ -341,13 +355,13 @@ public class Algo {
         }
 
         static <CType, NType> Cluster<CType, NType>
-        mergeClusters(Cluster<CType, NType> c1, Cluster<CType, NType> c2) {
+        mergeClusters(Cluster<CType, NType> firstCluster, Cluster<CType, NType> secondCluster) {
             Set<CType> newSetOfClusteredElements = new HashSet<>();
-            newSetOfClusteredElements.addAll(c1.clusteredElements);
-            newSetOfClusteredElements.addAll(c2.clusteredElements);
-            HashMap<Cluster<NType, CType>, Long> newNeighbours = new HashMap<>(c1.neighbours);
+            newSetOfClusteredElements.addAll(firstCluster.clusteredElements);
+            newSetOfClusteredElements.addAll(secondCluster.clusteredElements);
+            HashMap<Cluster<NType, CType>, Long> newNeighbours = new HashMap<>(firstCluster.neighbours);
 
-            for (Map.Entry<Cluster<NType, CType>, Long> c2Neighbour : c2.neighbours.entrySet()) {
+            for (Map.Entry<Cluster<NType, CType>, Long> c2Neighbour : secondCluster.neighbours.entrySet()) {
                 long newLinksCount = c2Neighbour.getValue();
                 newLinksCount += newNeighbours.getOrDefault(c2Neighbour.getKey(), 0L);
                 newNeighbours.put(c2Neighbour.getKey(), newLinksCount);
@@ -356,7 +370,7 @@ public class Algo {
             Cluster<CType, NType> newMergedCluster = new Cluster<>();
             newMergedCluster.clusteredElements = newSetOfClusteredElements;
             newMergedCluster.neighbours = newNeighbours;
-            newMergedCluster.totalCountOfLinks = c1.totalCountOfLinks + c2.totalCountOfLinks;
+            newMergedCluster.totalCountOfLinks = firstCluster.totalCountOfLinks + secondCluster.totalCountOfLinks;
 
             if (newMergedCluster.totalCountOfLinks < 0) {
                 CLUSTER_LOGGER.log(Level.SEVERE, "Total links count is below zero (possible overflow):",
@@ -403,21 +417,6 @@ public class Algo {
 
         Set<CType> getClusteredElements() {
             return Collections.unmodifiableSet(clusteredElements);
-        }
-
-        @Override
-        public int hashCode() {
-            return clusteredElements.hashCode();
-        }
-
-        @Override
-        public boolean equals(Object other) {
-            if (!(other instanceof Cluster)) {
-                return false;
-            }
-
-            Cluster otherCluster = (Cluster) other;
-            return clusteredElements.equals(otherCluster.clusteredElements);
         }
     }
 }
