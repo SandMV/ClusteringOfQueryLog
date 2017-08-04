@@ -1,10 +1,8 @@
 First 10000 clustered
-Threshold 0.01
+Threshold 0.001
 Minimal size of cluster 4
 
 [map q, maps, map quest, www.mapquest.com]
-----------------------------
-[amazon, doodle bear, lost tv dvd, black cotton table cloth, leader singer of blink 182 new band, galena illinois businesses, kids camp, all in magazine, musicians and their songs, tub tunes]
 ----------------------------
 [irs mailing address, www.irs.gov, internal revenue service mailing address, internal revenue service address]
 ----------------------------
@@ -17,6 +15,8 @@ Minimal size of cluster 4
 [van nails orlando ave, manicures in maitland fl, pediatric vision therapy fl orlando, carluccis]
 ----------------------------
 [www.southwestairlines, southwest airlines, south west airline, southwest air, southwest airline]
+----------------------------
+[doodle bear, amazon, lost tv dvd, black cotton table cloth, www.etacusenaire.com, leader singer of blink 182 new band, galena illinois businesses, kids camp, musicians and their songs, all in magazine, tub tunes]
 ----------------------------
 [walmart gun sells, walmart, www.walmart, walmart shot guns]
 ----------------------------

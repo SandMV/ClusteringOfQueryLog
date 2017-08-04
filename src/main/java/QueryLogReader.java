@@ -41,6 +41,10 @@ public class QueryLogReader {
         if(line.startsWith("#")) {
             return new String[]{};
         }
+        if(!tokens[1].equals("-")) {
+            lastQuery = tokens[1].toLowerCase().trim();
+        }
+
         // ignore queries which have no clickthroughs
         // as they don't have any impact on clustering
         if (tokens.length < 5) {
@@ -70,7 +74,5 @@ public class QueryLogReader {
         query[1] = query[1].toLowerCase().trim();
         Document doc = new Document(query[1]);
         queries.get(query[0]).addRelatedDocument(doc);
-
-        lastQuery = query[0];
     }
 }

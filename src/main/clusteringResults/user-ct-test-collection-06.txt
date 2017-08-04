@@ -1,12 +1,10 @@
 First 10000 clustered
-Threshold 0.01
+Threshold 0.001
 Minimal size of cluster 4
 
-[itin, 1040 tax schedule 2005, w-7 form, irs forms]
+[itin, w-7 form, 1040 tax schedule 2005, irs forms]
 ----------------------------
 [billboard top music dvd, billboards top music dvd, billboard top dvd, billboard top internet albums, billboard top 200]
-----------------------------
-[had a bad day, nickleback animals lyrics, thursday lyrics, the fray lyrics, avril lavigne, listen to your heart]
 ----------------------------
 [madrid train bombing, which music genre is most popular, on trial by fire, iberia airplanes a320-100 200, most dominated music genres, bob woodruff, there's not a star in heaven that we can't reach, avant garde, the big four wwii, ikhlas, azerbaijani, hecht's, london subway bombing]
 ----------------------------
@@ -18,15 +16,17 @@ Minimal size of cluster 4
 ----------------------------
 [lewis and clark state park, millersylvania state park washington state, belfair state park, schafer state park washington state]
 ----------------------------
-[fargo sleeves gl-112, a b chance fuse cutouts, polymer suspension insulator, polymer insulator, fargo connectors, polymer suspension insulator pdv, station post insulator, suspension insulator 522008-1102]
+[fargo sleeves gl-112, a b chance fuse cutouts, polymer insulator, polymer suspension insulator, fargo connectors, polymer suspension insulator pdv, station post insulator, suspension insulator 522008-1102]
 ----------------------------
-[n. cage, joesph cotton movies, alexis dziena, cruel intentions, mom at 16, cruel intentions 2, sean penn, cruel intentions 3, george hamilton, rosemary's baby, elisabeth shue]
+[n. cage, joesph cotton movies, alexis dziena, cruel intentions, mom at 16, cruel intentions 2, cruel intentions 3, sean penn, george hamilton, rosemary's baby, elisabeth shue]
 ----------------------------
 [jvc dual cassette cd player, blue crush soundtrack, cassette cd player, amazon.com, cruel intentions soundtrack]
+----------------------------
+[im sick of this scene i need a break from routine, had a bad day, nickleback animals lyrics, thursday lyrics, the fray lyrics, listen to your heart, avril lavigne]
 ----------------------------
 [the jonas brothers pure volume, panic at the disco, straylight run, all-american rejects, caffeine pure volume]
 ----------------------------
 [microsoft key board download, windows media player, explorer, flight simulators, microsoft key board downloads]
 ----------------------------
-[portable dual cassette, violet drapes, arch windows treatments, wholesale xl twin mattress sets, wholesale twin mattress and frames]
+[violet drapes, portable dual cassette, arch windows treatments, wholesale xl twin mattress sets, wholesale twin mattress and frames]
 ----------------------------

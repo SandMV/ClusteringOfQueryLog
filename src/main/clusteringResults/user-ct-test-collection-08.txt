@@ -1,8 +1,8 @@
 First 10000 clustered
-Threshold 0.01
+Threshold 0.001
 Minimal size of cluster 4
 
-[thompson springs tn realestate, music stores fontana ca, college in winters ca, pinson al, pickerington ohio]
+[thompson springs tn realestate, college in winters ca, music stores fontana ca, pinson al, pickerington ohio]
 ----------------------------
 [map quest, mapquest., map, mapquest.com, bank of america new bern nc]
 ----------------------------
@@ -12,11 +12,13 @@ Minimal size of cluster 4
 ----------------------------
 [24 hour fitness, 24hrfitness.com, 24hourfitness, 24hrfitness, 24hourfitness.com]
 ----------------------------
-[small wonder, channing tatum, shes the man movie, portman, hathaway, schindlers list, dancing at the blue iguana, anne b. real soundtrack, poseidon, legends of the fall]
+[miss florida 2004, gorgeous, miss teen florida 2004, miss florida sheena]
+----------------------------
+[small wonder, channing tatum, shes the man movie, portman, hathaway, dancing at the blue iguana, schindlers list, anne b. real soundtrack, poseidon, legends of the fall]
 ----------------------------
 [pressing on, lyric romeo and juliet are together in eternity, there for you damian marley lyrics, lyrics venus, music lyrics.com]
 ----------------------------
-[jeff cooper, vandal warlord, the civil war rome from from 49 to 45 b.c. was fought in, the bacchae greek city dionysus visited, father of cadmus bacchae, www.wikipedia.com, bank of america washington nc, jihad watch, amsterdam flag, doc holiday]
+[jeff cooper, vandal warlord, the civil war rome from from 49 to 45 b.c. was fought in, the bacchae greek city dionysus visited, father of cadmus bacchae, www.wikipedia.com, bank of america washington nc, jihad watch, doc holiday, amsterdam flag]
 ----------------------------
 [new long song cds, alice's adventures in wonderland by lewis carroll, sugarfoot musician, president nixon's attack on great society liberalism, decade of 60s, erotic story books, anatomy of the tongue in cheek, venus song remake, hustle and flow soundtrack, return to the blue iguana]
 ----------------------------

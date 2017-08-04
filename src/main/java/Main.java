@@ -21,7 +21,7 @@ public class Main {
     static String pathToResults = ".$src$main$clusteringResults$".replaceAll("\\$", File.separator);
     static String pathToProgramLogs = ".$src$main$programLogs".replaceAll("\\$", File.separator);
     static BufferedWriter output = null;
-    static double threshold = 0.01;
+    static double threshold = 0.001;
     static int lineLimit = (int) 1e4;
     static int minSizeOfCluster = 4;
 
@@ -29,10 +29,9 @@ public class Main {
         Path queryLogsDirectory = Paths.get(pathToLogs);
         Set<Query> queries = null;
         QueryLogReader queryLogReader = new QueryLogReader();
-        Algo algo = new Algo();
-        algo.setThreshold(threshold);
+        Algo algo = new Algo(threshold);
         for (Path logFile : Files.newDirectoryStream(queryLogsDirectory)) {
-            queries = (new QueryLogReader()).readQueryLog(logFile.toString(), (int) 1e4);
+            queries = queryLogReader.readQueryLog(logFile.toString(), lineLimit);
             File outputFile = new File(pathToResults, logFile.getFileName().toString());
             output = new BufferedWriter(new FileWriter(outputFile));
             makeDescription(output);

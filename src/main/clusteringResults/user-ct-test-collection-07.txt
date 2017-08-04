@@ -1,5 +1,5 @@
 First 10000 clustered
-Threshold 0.01
+Threshold 0.001
 Minimal size of cluster 4
 
 [kappa sigma photos, kappa sigma photos luke g zimmerman, luke g zimmerman, luke g zimmerman bryson city nc]
@@ -12,21 +12,19 @@ Minimal size of cluster 4
 ----------------------------
 [actos, celexa, flecainide, zyban]
 ----------------------------
-[southwest, southwest airlines, southwest air, southwestairlines.com]
-----------------------------
 [www.cartoonnetwork.cm, www.cartoonetwork.com, cartoonnetwork.com, www.cartoonnetwork.com]
 ----------------------------
-[irs gov, internal revenue service, irs.gov, tax refund, check status of refund, offer in compromise for irs]
+[irs gov, internal revenue service, irs.gov, check status of refund, tax refund, offer in compromise for irs]
 ----------------------------
-[watch busta rhymes touch it remix video, sex, lil jon, www.mtv.overdrive.com, mtv]
+[watch busta rhymes touch it remix video, lil jon, sex, www.mtv.overdrive.com, mtv]
 ----------------------------
 [mama search engine, mamasearch.com, www.mamasearch.cm, mama search]
 ----------------------------
-[disneychannel.com, www disney princess com, disney.go, power rangers]
+[www disney princess com, disneychannel.com, disney.go, power rangers]
 ----------------------------
 [virginia beach courts, virginia beach real estate assesser, city of virginia beach, virginiabeach]
 ----------------------------
 [zip codes, www.unitedstatespostoffice, post office jobs, track usps]
 ----------------------------
-[womens golf sets, amazon, dehydrator, www high school musical com, wicked wisdom, canon speedlight flash for canon digital rebel, prince charles watercolours paintings, canon digital rebel flash 430 speedlight]
+[womens golf sets, amazon, dehydrator, www high school musical com, wicked wisdom, canon speedlight flash for canon digital rebel, canon digital rebel flash 430 speedlight, prince charles watercolours paintings]
 ----------------------------

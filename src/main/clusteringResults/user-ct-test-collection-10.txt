@@ -1,5 +1,5 @@
 First 10000 clustered
-Threshold 0.01
+Threshold 0.001
 Minimal size of cluster 4
 
 [tac temps ma, discount limos in ma, patalano ford franklin ma, foxboro furniture foxboro ma, porter square shopping center somerville ma]
@@ -10,13 +10,11 @@ Minimal size of cluster 4
 ----------------------------
 [www.myspace.com, my space, my space.com, sikeston bands, aol my space]
 ----------------------------
-[ebayhttp, ebay, bay, ebay']
-----------------------------
-[coffin lowry syndrome genes, ketone reaction with hydrogen and metal, nigger, wiki, romanticism, 2-buten-1-ol, amine reaction with water, reaction of benzoic acid with methanol, honkey, kane eras center]
+[ketone reaction with hydrogen and metal, coffin lowry syndrome genes, nigger, wiki, romanticism, 2-buten-1-ol, amine reaction with water, kane eras center, honkey, reaction of benzoic acid with methanol]
 ----------------------------
 [fernadina beach news, fernandina news, newsleader fernadina, amelia island news paper]
 ----------------------------
-[best poker forums, poker site bonus codes, poker prepaid atm, poker site deposited with prepaid credit card, pokerlistings, pokerlistings.com]
+[best poker forums, poker site bonus codes, poker site deposited with prepaid credit card, poker prepaid atm, pokerlistings, pokerlistings.com]
 ----------------------------
 [city of eugene website, city of eugene athletics website, city of eugene jobs, city of eugene official website]
 ----------------------------
@@ -26,13 +24,11 @@ Minimal size of cluster 4
 ----------------------------
 [driving directions, directions, mapquest, mapquest.com]
 ----------------------------
-[yahoo, yahoo.com-, yahoo com, yahoo.com]
-----------------------------
 [fernandina beach apartments, masonry contractors milford ma, boca 20raton 20 fl 20 bars, people finders]
 ----------------------------
 [loma linda university med center, loma linda university medical center, loma linda university hospital, llumc]
 ----------------------------
-[moment of truth, modeling books, the three hour diet, marley marl album, amazon.com, karen voight yogasculpt, hollywoods best kept beauty secrets, crocheting school, gameboy advanced buy sp]
+[moment of truth, modeling books, the three hour diet, marley marl album, karen voight yogasculpt, amazon.com, hollywoods best kept beauty secrets, crocheting school, gameboy advanced buy sp]
 ----------------------------
 [courttv.com, courttv, court tv.com, court tv]
 ----------------------------

@@ -17,6 +17,14 @@ public class Algo {
     private DistanceMatrix<Cluster<Document, Query>> distancesBetweenDocuments;
 
     public Algo() {
+        this(0.01);
+    }
+
+    public Algo(double threshold) {
+        if (threshold > 1 || threshold < 0) {
+            throw new IllegalArgumentException("Threshold value should belong to [0, 1]");
+        }
+        this.threshold = threshold;
         queryClusters = new HashSet<>();
         documentClusters = new HashSet<>();
     }
