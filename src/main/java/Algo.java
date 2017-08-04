@@ -6,7 +6,12 @@ public class Algo {
 
     private static final Logger ALGO_LOGGER = Logger.getLogger(Algo.class.getName());
 
+    // distance between clusters lies in [0, 1]
+    // distance is less for closer (more similar) clusters
+    // so, we want to know when two clusters are close enough to merge
+    // threshold is maximal acceptable distance for merging clusters
     private double threshold = 0.01;
+
     // bipartite weighted graph
     // groups describe query clusters and document clusters respectively
     private Set<Cluster<Query, Document>> queryClusters;
@@ -74,6 +79,18 @@ public class Algo {
         ALGO_LOGGER.log(Level.FINE, "Count of iterations: {0}", iterCount);
     }
 
+    /**
+     * This method performs one step of clustering for one of the parts of the graph
+     * (for document clusters or for query clusters)
+     *
+     * @param currentClusters are clusters where pair with min distance will be looked for
+     * @param currentDistances are distances between currentClusters
+     * @param neighbourDistances distances between neighbour clusters (actually it only needed for
+     *                           recalculating distance between neighbour after two currentClusters were merged)
+     * @param <CType> type of current clusters
+     * @param <NType> type of neighbour clusters
+     * @return true if there was pair of clusters with distance less than threshold, false otherwise
+     */
     private <CType, NType> boolean tryMerge(Set<Cluster<CType, NType>> currentClusters,
                                             DistanceMatrix<Cluster<CType, NType>> currentDistances,
                                             DistanceMatrix<Cluster<NType, CType>> neighbourDistances) {
