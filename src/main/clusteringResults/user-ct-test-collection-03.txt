@@ -1,34 +1,21 @@
 First 10000 clustered
-Threshold 0.001
-Minimal size of cluster 4
+Threshold 0.01
+Minimal size of cluster 5
 
-[crimean wars, atheism, the president and vice president, mario rodriguez, hematidrosis, absaroka mountains, the troubles, list of georgia baptist ministries, l. paul bremer, intravenous, let it be, iran contra, jack kerouac, 1881, dirigibles, adrian cann, battle of guilford courthouse, axle, berlin blockade and airlift, c.u.n.y. nondegree summer music courses]
+[crimean wars, atheism, the president and vice president, mario rodriguez, hematidrosis, the troubles, absaroka mountains, list of georgia baptist ministries, l. paul bremer, iran contra, intravenous, let it be, jack kerouac, 1881, dirigibles, adrian cann, battle of guilford courthouse, berlin blockade and airlift, axle, c.u.n.y. nondegree summer music courses]
 ----------------------------
-[disney channel, www.disneychannel.com, the lion king, disneychannel.com, lilo and stich, disney.com]
+[disney channel, www.disneychannel.com, the lion king, disney.com, lilo and stich, disneychannel.com]
 ----------------------------
-[hotmail, hotmail.com, www.hotmail.com', hot mail, www.hotmail.com]
+[hotmail.com, hotmail, www.hotmail.com', hot mail, www.hotmail.com]
 ----------------------------
-[richard kiel, millie perkins, rochelle aytes and medea's family reunion, history of violence, high school musical and cast, high school musical and dvd and synopsis, uma thurman]
+[richard kiel, rochelle aytes and medea's family reunion, millie perkins, history of violence, high school musical and cast, high school musical and dvd and synopsis, uma thurman]
 ----------------------------
-[sprouse brothers and dislikes, wait till u see my, the cool pop locker dancer on you think you can dance, living family search of stepdad and brothers]
-----------------------------
-[windett ridge homes in yorkville il, lakewood creek west, new homes in yorkville, builders in oswego il, homebuilders in oswego il, new home in yorkville il, home builders in chicagoland area, saratoga homes, windett ridge]
+[lakewood creek west, windett ridge homes in yorkville il, new homes in yorkville, builders in oswego il, new home in yorkville il, homebuilders in oswego il, home builders in chicagoland area, saratoga homes, windett ridge]
 ----------------------------
 [katour line, katour line designer wig, katourlinewigs, katourline wigs, katour wigs]
 ----------------------------
 [rest your love on me, no body but me blake shelton, john schneider it's a short walk from heaven to hell, it's a short walk from heaven to hell john schneider, fire in the night by alabama, at the sound of the tone john schneider]
 ----------------------------
-[blackhawks roster, current steroid policy, ncaa bids, world baseball classic scores]
-----------------------------
-[www.ghanaweb.com, ghanaweb com, www.ghanaweb, ibrahim attiku]
-----------------------------
 [lyrics to the greatest love of all, casting crowns lyrics, az, kirk franklin looking for you, gone by kelly clarkson]
 ----------------------------
-[norton systemworks and directions, cds by john schneider, hear you'll think of me by keith urban, amazon.com]
-----------------------------
-[songs from beauty and the beast, lyrics for seasons of love, tales as old as times from beauty & the beast, home from the wiz]
-----------------------------
-[www.myspace.com, my space, my space.com, space.com]
-----------------------------
-[mapquest com, map quest, mapquest, map of long green maryland]
-----------------------------
+Maximal size of cluster: 20

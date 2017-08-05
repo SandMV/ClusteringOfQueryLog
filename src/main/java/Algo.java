@@ -75,7 +75,7 @@ public class Algo {
             canMergeClusters |= tryMerge(documentClusters, distancesBetweenDocuments, distancesBetweenQueries);
         }
         long elapsedTime = System.nanoTime() - startTime;
-        ALGO_LOGGER.log(Level.FINE, "Time: {0}s", elapsedTime/1e9);
+        ALGO_LOGGER.log(Level.FINE, "Time: {0}s", elapsedTime / 1e9);
         ALGO_LOGGER.log(Level.FINE, "Count of iterations: {0}", iterCount);
     }
 
@@ -83,12 +83,12 @@ public class Algo {
      * This method performs one step of clustering for one of the parts of the graph
      * (for document clusters or for query clusters)
      *
-     * @param currentClusters are clusters where pair with min distance will be looked for
-     * @param currentDistances are distances between currentClusters
+     * @param currentClusters    are clusters where pair with min distance will be looked for
+     * @param currentDistances   are distances between currentClusters
      * @param neighbourDistances distances between neighbour clusters (actually it only needed for
      *                           recalculating distance between neighbour after two currentClusters were merged)
-     * @param <CType> type of current clusters
-     * @param <NType> type of neighbour clusters
+     * @param <CType>            type of current clusters
+     * @param <NType>            type of neighbour clusters
      * @return true if there was pair of clusters with distance less than threshold, false otherwise
      */
     private <CType, NType> boolean tryMerge(Set<Cluster<CType, NType>> currentClusters,
@@ -149,7 +149,7 @@ public class Algo {
     private <CType, NType> DistanceMatrix<Cluster<CType, NType>>
     createDistanceMatrixForSetOfClusters(Set<Cluster<CType, NType>> clusters) {
         Set<Cluster<CType, NType>> alreadyDone = new HashSet<>();
-        DistanceMatrix<Cluster<CType, NType>> distances = new DistanceMatrixImpl<>();
+        DistanceMatrix<Cluster<CType, NType>> distances = new DistanceMatrixTree<>();
 
         for (Cluster<CType, NType> c : clusters) {
             alreadyDone.add(c);
@@ -263,61 +263,40 @@ public class Algo {
                           Cluster<CType, NType> mergeResult,
                           DistanceMatrix<Cluster<CType, NType>> siblingsDistance,
                           DistanceMatrix<Cluster<NType, CType>> neighbourDistance) {
-        // deleteRow is convenient, but waaaay too inefficient, at least current implementation :)
-        Map<Cluster<CType, NType>, Double> delDistC1 = new HashMap<>();
-        Map<Cluster<CType, NType>, Double> delDistC2 = new HashMap<>();
+        // deleteRow is convenient, but waaaay too inefficient, so we delete distances one by one
+        getSiblings(firstCluster).forEach(sib -> siblingsDistance.deleteDistance(sib, firstCluster));
+        getSiblings(secondCluster).forEach(sib -> siblingsDistance.deleteDistance(sib, secondCluster));
+
+        // we deleted all links which lead to firstCluster and secondCluster thus they are not siblings anymore
+        // so we need to delete distance between them manually
         siblingsDistance.deleteDistance(firstCluster, secondCluster);
 
-        getSiblings(firstCluster).stream()
-                .forEach(sib -> delDistC1.put(sib, siblingsDistance.deleteDistance(sib, firstCluster)));
-        getSiblings(secondCluster).stream()
-                .forEach(sib -> delDistC2.put(sib, siblingsDistance.deleteDistance(sib, secondCluster)));
-
-        Set<Cluster<CType, NType>> commonSiblings = new HashSet<>(delDistC1.keySet());
-        commonSiblings.retainAll(delDistC2.keySet());
-
-        Set<Cluster<CType, NType>> notCommonSiblings = new HashSet<>(delDistC1.keySet());
-        notCommonSiblings.addAll(delDistC2.keySet());
-        notCommonSiblings.removeAll(commonSiblings);
-
-        // first and second clusters are deleted from the graph and can't be reached from other cluster
-        // however it is possible to reach some clusters from them -- their siblings
-        // mergeResult is their new sibling, so we need to remove it from commonSiblings
-        // to avoid incorrect behavior
-        commonSiblings.remove(mergeResult);
-
-        // for some siblings their distance to mergeResult is equal to distance to first or second cluster
-        // no need to recalculate distance for them (count of common links is the same)
-        // only clusters who had firstCluster and secondCluster as siblings simultaneously now
-        // have new distance to mergeResult (obviously new count of common links)
-        updateDistanceBetweenClusterAndSiblings(mergeResult,
-                commonSiblings,
+        // we need to add distances between mergeResult and its siblings to appropriate distance matrix
+        addDistanceBetweenClusterAndSiblings(mergeResult,
+                getSiblings(mergeResult),
                 siblingsDistance);
 
-        // Just rewrite old distances for the rest of clusters
-        for (Cluster<CType, NType> sibling : notCommonSiblings) {
-            double distance = delDistC1.get(sibling) == null ? delDistC2.get(sibling) : delDistC1.get(sibling);
-            siblingsDistance.addDistance(sibling, mergeResult, distance);
-        }
-
-
-        // distance between who were neighbours to firstCluster and secondCluster simultaneously
-        // didn't change. For other neighbours we need to recalculate distance
+        // distance between clusters who were neighbours to firstCluster and secondCluster simultaneously
+        // didn't change. For other pairs of neighbours we need to recalculate distance
         Set<Cluster<NType, CType>> commonNeighbours = new HashSet<>(firstCluster.getNeighbours());
         commonNeighbours.retainAll(secondCluster.getNeighbours());
 
-        Set<Cluster<NType, CType>> notCommonNeighbours = new HashSet<>(firstCluster.getNeighbours());
-        notCommonNeighbours.addAll(secondCluster.getNeighbours());
-        notCommonNeighbours.removeAll(commonNeighbours);
+        Set<Cluster<NType, CType>> onlyFirstClusterNeighbours = new HashSet<>(firstCluster.getNeighbours());
+        onlyFirstClusterNeighbours.removeAll(commonNeighbours);
 
-        updateDistancesForSubsetOfClusters(notCommonNeighbours, commonNeighbours,
+        Set<Cluster<NType, CType>> onlySecondClusterNeighbours = new HashSet<>(secondCluster.getNeighbours());
+        onlySecondClusterNeighbours.removeAll(commonNeighbours);
+
+        updateDistancesForSubsetOfClusters(onlyFirstClusterNeighbours,
+                onlySecondClusterNeighbours,
+                commonNeighbours,
                 neighbourDistance);
     }
 
     private <CType, NType> void
-    updateDistanceBetweenClusterAndSiblings(Cluster<CType, NType> cluster,
-                                            Set<Cluster<CType, NType>> siblings,
-                                            DistanceMatrix<Cluster<CType, NType>> distances) {
+    addDistanceBetweenClusterAndSiblings(Cluster<CType, NType> cluster,
+                                         Set<Cluster<CType, NType>> siblings,
+                                         DistanceMatrix<Cluster<CType, NType>> distances) {
         for (Cluster<CType, NType> sibling : siblings) {
             distances.addDistance(cluster, sibling, computeDistanceBetweenClusters(cluster, sibling));
         }
@@ -325,27 +304,34 @@ public class Algo {
 
     /**
      * This method recalculates distances for some subset of clusters. This subset forms as follows:
-     * all subsets of two elements from pairSet, and all sets of two elements where one is from pairSet and other
-     * is from ignorePairSet
+     * 1) All pairs where one element is from firstSet and another is from secondSet
+     * 2) All pairs where one element is from firstSet and another is from commonSet
+     * 3) All pairs where one element is from secondSet and another is from commonSet
      *
-     * @param pairSet
-     * @param ignorePairSet
-     * @param distances     is distance matrix which stores all distances between clusters of corresponding
-     *                      set of clusters
-     * @param <CType>       type of elements which are stored in clusters
-     * @param <NType>       type of elements which are stored in neighbour clusters
+     * @param firstSet  clusters which are neighbours for only firstCluster
+     * @param secondSet clusters which are neighbours for only secondCluster
+     * @param commonSet clusters which are common for both clusters
+     * @param distances is distance matrix which stores all distances between clusters of corresponding
+     *                  set of clusters
+     * @param <CType>   type of elements which are stored in clusters
+     * @param <NType>   type of elements which are stored in neighbour clusters
      */
     private <CType, NType> void
-    updateDistancesForSubsetOfClusters(Set<Cluster<CType, NType>> pairSet,
-                                       Set<Cluster<CType, NType>> ignorePairSet,
+    updateDistancesForSubsetOfClusters(Set<Cluster<CType, NType>> firstSet,
+                                       Set<Cluster<CType, NType>> secondSet,
+                                       Set<Cluster<CType, NType>> commonSet,
                                        DistanceMatrix<Cluster<CType, NType>> distances) {
-        Set<Cluster<CType, NType>> restOfTheClusters = new HashSet<>(pairSet);
-        for (Cluster<CType, NType> cluster : pairSet) {
-            restOfTheClusters.remove(cluster);
-            for (Cluster<CType, NType> sibling : restOfTheClusters) {
+        for (Cluster<CType, NType> cluster : firstSet) {
+            for (Cluster<CType, NType> sibling : commonSet) {
                 distances.addDistance(cluster, sibling, computeDistanceBetweenClusters(cluster, sibling));
             }
-            for (Cluster<CType, NType> sibling : ignorePairSet) {
+            for (Cluster<CType, NType> sibling : secondSet) {
+                distances.addDistance(cluster, sibling, computeDistanceBetweenClusters(cluster, sibling));
+            }
+        }
+
+        for (Cluster<CType, NType> cluster : secondSet) {
+            for (Cluster<CType, NType> sibling : commonSet) {
                 distances.addDistance(cluster, sibling, computeDistanceBetweenClusters(cluster, sibling));
             }
         }
@@ -443,5 +429,11 @@ public class Algo {
         Set<CType> getClusteredElements() {
             return Collections.unmodifiableSet(clusteredElements);
         }
+
+        @Override
+        public boolean equals(Object other) {
+            return this == other;
+        }
+
     }
 }

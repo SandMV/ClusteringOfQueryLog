@@ -1,28 +1,21 @@
 First 10000 clustered
-Threshold 0.001
-Minimal size of cluster 4
+Threshold 0.01
+Minimal size of cluster 5
 
-[kennesaw state university, anne frank exhibit, ksu continuing education directions, ksu continuing education anne frank exhibit]
-----------------------------
-[white pages, sanford fl. white pages, sanford fl. white pages reverse search, sanford fl. phone book]
-----------------------------
 [vote by education 2004, cnn lou dobbs, vote by education, when does the immigration proposal could be pass, dow jones average highest lowest]
 ----------------------------
 [wife swap tv, extreme makeovers, abc, wife swap, abc wife swap, wife swap abc]
 ----------------------------
 [j.dia, thomas gradles, springford high school annalisa, eric church, ally & ashley music videos]
 ----------------------------
-[drop shipping, aircraft carrier, 3 some trannies, rapprochement, ibook, beethoven 9th lyrics english, jewish leader who was assassinated, victor davis hanson, johnny cash, us civil war deaths, basketball ncaa champions, special victims unit of the new york police department, stargate sg1 ship specifications, himmler, i want you i need you i love you, cbs, the platters current, printable world map during world war one, solenoid, unit of measuring heat of peppers, wikipedia, taqiyya, tf 11]
+[drop shipping, aircraft carrier, 3 some trannies, rapprochement, ibook, beethoven 9th lyrics english, jewish leader who was assassinated, victor davis hanson, johnny cash, basketball ncaa champions, us civil war deaths, special victims unit of the new york police department, stargate sg1 ship specifications, himmler, i want you i need you i love you, cbs, the platters current, printable world map during world war one, solenoid, unit of measuring heat of peppers, wikipedia, taqiyya, tf 11]
 ----------------------------
 [yahoomutualfunds.com, prwcx, yahoo mutual funds, rochester fund municipals class a symbol, userx, yahoo finance, prrxx]
 ----------------------------
-[douglas e. polley, amazon horatio hornblower, they call me the fat man, bkk, john dean book 2006, investor's business daily, bushings for circular saw, voyager amazon, deadwood amazon, 24 amazon season four, john dean book, ready to die notorious]
+[douglas e. polley, bkk, amazon horatio hornblower, they call me the fat man, john dean book 2006, investor's business daily, bushings for circular saw, voyager amazon, deadwood amazon, 24 amazon season four, john dean book, ready to die notorious]
 ----------------------------
 [heparin, normal pulse rate, cervical polyps, urine testing specific gravity, hypertrophic cardiomyopathy, questran]
 ----------------------------
-[chevy timing, how do u get parvo, puppy fungus, adult movie distribution]
+[www.sixflags, six flags.com, www.six flags great adventure, six flags, www.sixflags great adventure, six flags over georgia, www.six flags]
 ----------------------------
-[www.sixflags, six flags.com, www.six flags great adventure, six flags, six flags over georgia, www.sixflags great adventure, www.six flags]
-----------------------------
-[myspace., myspac, myspace.com, jenny hendrix]
-----------------------------
+Maximal size of cluster: 23

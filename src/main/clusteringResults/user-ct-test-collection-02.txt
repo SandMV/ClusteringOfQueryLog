@@ -1,28 +1,15 @@
 First 10000 clustered
-Threshold 0.001
-Minimal size of cluster 4
+Threshold 0.01
+Minimal size of cluster 5
 
-[kings creek orlando, maui vacation packages, chateau du pray, summitt panama city]
-----------------------------
 [www bankofamerica.com, bank of america, bank of america online, bank of america.com, www.bank of america.com, bankofamerica]
-----------------------------
-[nj unemployment, n.j. lottery, new jersey department of banking, steve metzger author]
 ----------------------------
 [the sports list, fences, lou diamond, bryce dallas howard, emma watson, little women, maury tierney]
 ----------------------------
-[google.com, google. com, www.google.com, www google.com]
-----------------------------
-[arapahoe county sheriff colorado, arapahoe county sheriff, arapahoe county police, arapahoe country law enforcement]
-----------------------------
-[free contractors junk, arapahoe police, mass lottery, yellow pages]
-----------------------------
-[uua, uua christian leaders, janet hayes uua, unitarian-universalist, good news uua, uua weave, uua tapestry, uuaga, uua ga]
-----------------------------
-[cherry creek schools.org, cherry creek school board, grandview high school prom, ccsd]
-----------------------------
-[www.skylight.net, skylight banking, interacial singles, skylight banking online]
+[uua christian leaders, uua, janet hayes uua, unitarian-universalist, good news uua, uua weave, uua tapestry, uuaga, uua ga]
 ----------------------------
 [windows media player, microsoft updates, windows 95, microsoft downloads, media player, microsoft.com, windows 98, microsoft wireless keyboard drivers]
 ----------------------------
 [hermetics, wikpedia, lee harvey oswald assassinated president john f. kennedy., pandora's box, abraham joshua heschel]
 ----------------------------
+Maximal size of cluster: 9

@@ -11,7 +11,7 @@ public class UnorderedPairTests {
         Object o1InPair = new Object();
         Object o2InPair = new Object();
         Object o3NotInPair = new Object();
-        UnorderedPair unorderedPair = new UnorderedPairImpl(o1InPair, o2InPair);
+        UnorderedPair unorderedPair = new UnorderedPairHash(o1InPair, o2InPair);
 
         Assert.assertTrue(unorderedPair.inPair(o1InPair));
         Assert.assertTrue(unorderedPair.inPair(o2InPair));
@@ -23,7 +23,7 @@ public class UnorderedPairTests {
     public void testInPair_EqualObjects() {
         Object o1InPair = new Object();
         Object o2NotInPair = new Object();
-        UnorderedPair unorderedPair = new UnorderedPairImpl(o1InPair, o1InPair);
+        UnorderedPair unorderedPair = new UnorderedPairHash(o1InPair, o1InPair);
 
         Assert.assertTrue(unorderedPair.inPair(o1InPair));
         Assert.assertTrue(unorderedPair.inPair(o1InPair));
@@ -37,7 +37,7 @@ public class UnorderedPairTests {
         Object o2InPair = new Object();
         Object o3NotInPair = new Object();
 
-        UnorderedPair uPair = new UnorderedPairImpl(o1InPair, o2InPair);
+        UnorderedPair uPair = new UnorderedPairHash(o1InPair, o2InPair);
 
         Assert.assertTrue(o1InPair.equals(uPair.getNotEqualTo(o2InPair)));
         Assert.assertTrue(o2InPair.equals(uPair.getNotEqualTo(o1InPair)));
@@ -54,7 +54,7 @@ public class UnorderedPairTests {
         Object oInPair = new Object();
         Object oNotInPair = new Object();
 
-        UnorderedPair uPair = new UnorderedPairImpl(oInPair, oInPair);
+        UnorderedPair uPair = new UnorderedPairHash(oInPair, oInPair);
 
         Assert.assertNull(uPair.getNotEqualTo(oInPair));
         Assert.assertTrue(oInPair.equals(uPair.getNotEqualTo(oNotInPair)));
@@ -67,12 +67,12 @@ public class UnorderedPairTests {
         Object o2 = new Object();
         Object o3 = new Object();
 
-        UnorderedPair uPair1 = new UnorderedPairImpl(o1, o2);
-        UnorderedPair uPair2 = new UnorderedPairImpl(o1, o2);
-        UnorderedPair uPair3 = new UnorderedPairImpl(o2, o1);
-        UnorderedPair uPair4 = new UnorderedPairImpl(o1, o1);
-        UnorderedPair uPair5 = new UnorderedPairImpl(o1, o1);
-        UnorderedPair uPair6 = new UnorderedPairImpl(o2, o3);
+        UnorderedPair uPair1 = new UnorderedPairHash(o1, o2);
+        UnorderedPair uPair2 = new UnorderedPairHash(o1, o2);
+        UnorderedPair uPair3 = new UnorderedPairHash(o2, o1);
+        UnorderedPair uPair4 = new UnorderedPairHash(o1, o1);
+        UnorderedPair uPair5 = new UnorderedPairHash(o1, o1);
+        UnorderedPair uPair6 = new UnorderedPairHash(o2, o3);
 
         Assert.assertTrue(uPair1.equals(uPair2));
         Assert.assertTrue(uPair1.equals(uPair3));
@@ -84,6 +84,6 @@ public class UnorderedPairTests {
 
     @Test(expected = IllegalArgumentException.class)
     public void testStoreNull() {
-        new UnorderedPairImpl<>(null, new Object());
+        new UnorderedPairHash<>(null, new Object());
     }
 }

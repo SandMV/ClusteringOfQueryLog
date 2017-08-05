@@ -31,6 +31,7 @@ public class Query {
         long newLinksCount = relatedDocuments.getOrDefault(doc, 0L) + linksCount;
         relatedDocuments.put(doc, newLinksCount);
     }
+
     @Override
     public String toString() {
         return query;

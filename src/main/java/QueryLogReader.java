@@ -3,7 +3,6 @@
  */
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -15,14 +14,14 @@ import java.util.Set;
  * We assume files have structure as follows:
  * id   query   queryTime   itemRank    clickUrl
  * we only need query and clickUrl
- *
- * Also we will treat lines which start with # as commentaries and ignore them
+ * <p>
+ * Also we will treat lines which start with '#' as commentaries and ignore them
  */
 public class QueryLogReader {
     private Map<String, Query> queries;
     private String lastQuery = "";
 
-    public Set<Query> readQueryLog(String fileName, int nLines) throws FileNotFoundException, IOException {
+    public Set<Query> readQueryLog(String fileName, int nLines) throws IOException {
         queries = new HashMap<>();
 
         try (BufferedReader input = new BufferedReader(new FileReader(fileName))) {
@@ -38,10 +37,10 @@ public class QueryLogReader {
     private String[] extractQueryAndDocNameFromLine(String line) {
         String[] tokens = line.split("\t");
         // ignore 'comments'
-        if(line.startsWith("#")) {
-            return new String[]{};
+        if (line.startsWith("#")) {
+            return new String[] {};
         }
-        if(!tokens[1].equals("-")) {
+        if (!tokens[1].equals("-")) {
             lastQuery = tokens[1].toLowerCase().trim();
         }
 
@@ -54,7 +53,7 @@ public class QueryLogReader {
     }
 
     private void addQuery(String[] query) {
-        if(query.length < 2) {
+        if (query.length < 2) {
             return;
         }
         // some queries are "-" I treat them as refer to previous query
@@ -63,7 +62,7 @@ public class QueryLogReader {
         }
 
         query[0] = query[0].toLowerCase().trim();
-        if(query[0].equals("")) {
+        if (query[0].equals("")) {
             return;
         }
 

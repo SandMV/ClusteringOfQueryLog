@@ -1,46 +1,29 @@
 First 10000 clustered
-Threshold 0.001
-Minimal size of cluster 4
+Threshold 0.01
+Minimal size of cluster 5
 
-[california renegades baseball club, superseries of america, superseries baseball, superseries]
-----------------------------
 [steamboat inn at mystic connecticut, resortquest waikiki sunset hotel, tripadvisor.com, holiday inn express in springfield missouri, flathead hotels]
 ----------------------------
-[www.myspace.com bboyjp, we hold these experiences to be self evident that all is equal that the creation endows us with certain inalienable rights that among them are the freedom of the body the pursuit of joy and the expansion of conciousness, staylight run lyrics, www.myspace.com kristinklein, noelle kristin, avlayouts, jacquelyn and bj, kimmycoacoapuffs]
+[www.myspace.com bboyjp, we hold these experiences to be self evident that all is equal that the creation endows us with certain inalienable rights that among them are the freedom of the body the pursuit of joy and the expansion of conciousness, staylight run lyrics, www.myspace.com kristinklein, avlayouts, noelle kristin, jacquelyn and bj, kimmycoacoapuffs]
 ----------------------------
-[ashlee simpson lyrics, this day and age lyrics, brand new lyrics, the spill canvas lyrics, the alkaline trio lyrics, something corporate lyrics, taking back sunday lyrics, dashboard confessional lyrics, toby keith lyrics, starting line lyrics, bryan adams lyrics, neil young lyrics]
+[ashlee simpson lyrics, this day and age lyrics, brand new lyrics, the spill canvas lyrics, the alkaline trio lyrics, something corporate lyrics, taking back sunday lyrics, dashboard confessional lyrics, toby keith lyrics, starting line lyrics, neil young lyrics, bryan adams lyrics]
 ----------------------------
-[belleair biltmore hotel florida, calvin klein collection store on madison avenue, definition labeled probe, the allies had a better partnership than the central powers in world war 1.]
+[what does ambition mean, what does adrenaline mean, what does accompany mean, what does acute mean, what does ambiguous mean, what does abundant mean]
 ----------------------------
-[what does adrenaline mean, what does ambition mean, what does accompany mean, what does acute mean, what does ambiguous mean, what does abundant mean]
-----------------------------
-[spitalfield lyrics, it's the heart of a champion its the heart of me, it always comes back to you, lyrics from first to last, amber pacific lyrics]
-----------------------------
-[www.google, girls high school summer basketball in kansas city, google, www.marlboroughhuntraces.com]
-----------------------------
-[walmart customer service, walmart.com, walmart, www.walmart.com]
+[spitalfield lyrics, it always comes back to you, it's the heart of a champion its the heart of me, lyrics from first to last, amber pacific lyrics]
 ----------------------------
 [peter sarsgaard, paul walker.com, tambien, drea de matteo, musikladen]
 ----------------------------
 [myspace, ashley parker angel video let u go, www.myspace.co, my space.com, www myspace.com, http myspace.com]
 ----------------------------
-[lyrics seize the day, plain white ts lyrics, fall out boy lyrics, the early november lyrics]
-----------------------------
-[lyrics taking back sunday, lyrics you got it bad, david gray lyrics, lyrics cute without the 'e']
-----------------------------
-[virginia beach vet, spa independence virginia beach, carpet greenville, dr. carney plastic surgery virginia beach]
-----------------------------
 [marriott columbus georgia, marriott residence inn columbus ga, the woodlands marriott, the renaissance hotel austin, fairfield inn, renaissance austin]
 ----------------------------
-[insulin, ammonium nitrate, states & their abbreviation, ibsen henrik, abstract impressionism, jack dunphy, how america was affected before ww1, what a blog is, theophilus danjuma, randy newman, jasper florida, size and female pleasure, what is a limerick]
+[insulin, ammonium nitrate, states & their abbreviation, ibsen henrik, abstract impressionism, how america was affected before ww1, jack dunphy, what a blog is, theophilus danjuma, jasper florida, randy newman, size and female pleasure, what is a limerick]
 ----------------------------
 [7 for mankind plus size jeans, tommy hilfiger, wdas classic soul cds, the american dream the 50s time life, amazon.com, mp3 players, chris botti]
 ----------------------------
-[www.mapquest, map of north attleboro massachusetts, mapquest.cm, map quest, austin westlake hotels, mapquest.com]
+[www.mapquest, map of north attleboro massachusetts, map quest, mapquest.cm, austin westlake hotels, mapquest.com]
 ----------------------------
-[ebay.com, ebay.comn, ebay, ww.ebay.com]
+[kellybluebook.com, kelly blue book, www.autobuyguide.com, kbb, blue book, kbb.com]
 ----------------------------
-[iowa doctor natural medicine, natural doctors in des moines, natural medicine doctors in iowa, natural doctors in iowa]
-----------------------------
-[kellybluebook.com, kelly blue book, www.autobuyguide.com, blue book, kbb, kbb.com]
-----------------------------
+Maximal size of cluster: 13

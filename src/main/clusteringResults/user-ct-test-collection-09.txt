@@ -1,24 +1,13 @@
 First 10000 clustered
-Threshold 0.001
-Minimal size of cluster 4
+Threshold 0.01
+Minimal size of cluster 5
 
-[map q, maps, map quest, www.mapquest.com]
-----------------------------
-[irs mailing address, www.irs.gov, internal revenue service mailing address, internal revenue service address]
-----------------------------
-[postal service, u.s. postal rates, zip codes, usps, post office available positions fl, postal office, ww.usps.com]
-----------------------------
-[tri care for life, crdp, old military pay charts, military.com]
+[u.s. postal rates, postal service, zip codes, usps, post office available positions fl, postal office, ww.usps.com]
 ----------------------------
 [myspace, www.myspace.com, myspace.com, kiss my freak show radio, him myspace thank you graphics, listen to grillz remix featuring chingo bling]
 ----------------------------
-[van nails orlando ave, manicures in maitland fl, pediatric vision therapy fl orlando, carluccis]
-----------------------------
 [www.southwestairlines, southwest airlines, south west airline, southwest air, southwest airline]
 ----------------------------
-[doodle bear, amazon, lost tv dvd, black cotton table cloth, www.etacusenaire.com, leader singer of blink 182 new band, galena illinois businesses, kids camp, musicians and their songs, all in magazine, tub tunes]
+[amazon, doodle bear, lost tv dvd, www.etacusenaire.com, black cotton table cloth, galena illinois businesses, leader singer of blink 182 new band, kids camp, all in magazine, musicians and their songs, tub tunes]
 ----------------------------
-[walmart gun sells, walmart, www.walmart, walmart shot guns]
-----------------------------
-[new mexico state university golf course, nmsu, new mexico state university, nmsu cheerleading squad]
-----------------------------
+Maximal size of cluster: 11

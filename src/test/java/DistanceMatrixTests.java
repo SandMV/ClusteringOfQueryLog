@@ -10,7 +10,7 @@ import java.util.Map;
 public class DistanceMatrixTests {
     @Test
     public void testAddDistance() {
-        DistanceMatrix dMatrix = new DistanceMatrixImpl();
+        DistanceMatrix dMatrix = new DistanceMatrixTree();
 
         Object o1 = new Object();
         Object o2 = new Object();
@@ -37,13 +37,13 @@ public class DistanceMatrixTests {
 
     @Test(expected = IllegalArgumentException.class)
     public void testAddDistance_NegativeDistance() {
-        DistanceMatrix distanceMatrix = new DistanceMatrixImpl();
+        DistanceMatrix distanceMatrix = new DistanceMatrixTree();
         distanceMatrix.addDistance(new Object(), new Object(), -1);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testAddDistance_Null() {
-        DistanceMatrix distanceMatrix = new DistanceMatrixImpl();
+        DistanceMatrix distanceMatrix = new DistanceMatrixTree();
         distanceMatrix.addDistance(null, new Object(), 1);
     }
 
@@ -107,16 +107,16 @@ public class DistanceMatrixTests {
         Assert.assertEquals(val, distanceMatrix.getDistance(pt1, pt2), 1e-8);
 
         distanceMatrix.addDistance(pt1, pt2, val - 1);
-        Assert.assertEquals(new UnorderedPairImpl(pt1, pt2), distanceMatrix.getPairWithMinDistance());
+        Assert.assertEquals(new UnorderedPairHash(pt1, pt2), distanceMatrix.getPairWithMinDistance());
 
         distanceMatrix.deleteDistance(pt1, pt2);
-        Assert.assertNotEquals(new UnorderedPairImpl(pt1, pt2), distanceMatrix.getPairWithMinDistance());
+        Assert.assertNotEquals(new UnorderedPairHash(pt1, pt2), distanceMatrix.getPairWithMinDistance());
 
         distanceMatrix.addDistance(pt1, pt2, val - 1);
-        Assert.assertEquals(new UnorderedPairImpl(pt1, pt2), distanceMatrix.getPairWithMinDistance());
+        Assert.assertEquals(new UnorderedPairHash(pt1, pt2), distanceMatrix.getPairWithMinDistance());
 
         distanceMatrix.deleteRow(pt1);
-        Assert.assertNotEquals(new UnorderedPairImpl(pt1, pt2), distanceMatrix.getPairWithMinDistance());
+        Assert.assertNotEquals(new UnorderedPairHash(pt1, pt2), distanceMatrix.getPairWithMinDistance());
 
         minPair = distanceMatrix.getPairWithMinDistance();
         distanceMatrix.addDistance(new Object(), new Object(), val - 1);
@@ -141,16 +141,16 @@ public class DistanceMatrixTests {
         Assert.assertEquals(val, distanceMatrix.getDistance(pt1, pt2), 1e-8);
 
         distanceMatrix.addDistance(pt1, pt2, val + 1);
-        Assert.assertEquals(new UnorderedPairImpl(pt1, pt2), distanceMatrix.getPairWithMaxDistance());
+        Assert.assertEquals(new UnorderedPairHash(pt1, pt2), distanceMatrix.getPairWithMaxDistance());
 
         distanceMatrix.deleteDistance(pt1, pt2);
-        Assert.assertNotEquals(new UnorderedPairImpl(pt1, pt2), distanceMatrix.getPairWithMaxDistance());
+        Assert.assertNotEquals(new UnorderedPairHash(pt1, pt2), distanceMatrix.getPairWithMaxDistance());
 
         distanceMatrix.addDistance(pt1, pt2, val + 1);
-        Assert.assertEquals(new UnorderedPairImpl(pt1, pt2), distanceMatrix.getPairWithMaxDistance());
+        Assert.assertEquals(new UnorderedPairHash(pt1, pt2), distanceMatrix.getPairWithMaxDistance());
 
         distanceMatrix.deleteRow(pt1);
-        Assert.assertNotEquals(new UnorderedPairImpl(pt1, pt2), distanceMatrix.getPairWithMaxDistance());
+        Assert.assertNotEquals(new UnorderedPairHash(pt1, pt2), distanceMatrix.getPairWithMaxDistance());
 
         minPair = distanceMatrix.getPairWithMinDistance();
         distanceMatrix.addDistance(new Object(), new Object(), val + 1);
@@ -164,7 +164,7 @@ public class DistanceMatrixTests {
 
     @Test
     public void testMinMaxPair_EmptyMatrix() {
-        DistanceMatrix distanceMatrix = new DistanceMatrixImpl();
+        DistanceMatrix distanceMatrix = new DistanceMatrixTree();
         Assert.assertEquals(null, distanceMatrix.getPairWithMinDistance());
         Assert.assertEquals(null, distanceMatrix.getPairWithMaxDistance());
     }
@@ -176,7 +176,7 @@ public class DistanceMatrixTests {
      * made from points with distance = val
      */
     private DistanceMatrix makeMatrix(double val, Object... points) {
-        DistanceMatrix distanceMatrix = new DistanceMatrixImpl();
+        DistanceMatrix distanceMatrix = new DistanceMatrixTree();
         for (int i = 0; i < points.length; ++i) {
             for (int j = i + 1; j < points.length; ++j) {
                 distanceMatrix.addDistance(points[i], points[j], val);
