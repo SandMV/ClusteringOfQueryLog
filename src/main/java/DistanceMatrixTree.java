@@ -77,6 +77,10 @@ public class DistanceMatrixTree<T> implements DistanceMatrix<T> {
 
   @Override
   public Map<T, Double> deleteRow(T point) {
+    if (point == null) {
+      return new HashMap<>();
+    }
+
     Set<Map.Entry<UnorderedPair<T>, Double>> row =
         distMatrixPairKey
             .entrySet()

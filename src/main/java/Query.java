@@ -25,10 +25,16 @@ public class Query {
   }
 
   public void addRelatedDocument(Document doc) {
+    if (doc == null) {
+      return;
+    }
     addRelatedDocument(doc, 1);
   }
 
   public void addRelatedDocument(Document doc, long linksCount) {
+    if (doc == null) {
+      return;
+    }
     long newLinksCount = relatedDocuments.getOrDefault(doc, 0L) + linksCount;
     relatedDocuments.put(doc, newLinksCount);
   }

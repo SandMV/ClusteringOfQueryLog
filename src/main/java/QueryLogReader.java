@@ -23,6 +23,14 @@ public class QueryLogReader {
   private String lastQuery = "";
 
   public Set<Query> readQueryLog(String fileName, int nLines) throws IOException {
+    if (fileName == null) {
+      throw new IllegalArgumentException("fileName should not be null");
+    }
+
+    if (nLines < 0) {
+      throw new IllegalArgumentException("Lines count should not be less than 0");
+    }
+
     queries = new HashMap<>();
 
     try (BufferedReader input = new BufferedReader(new FileReader(fileName))) {
