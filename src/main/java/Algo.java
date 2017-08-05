@@ -50,6 +50,10 @@ public class Algo {
   }
 
   public Set<Set<Query>> clusterQueries(Set<Query> queries) {
+    if (queries == null) {
+      return null;
+    }
+
     initState(queries);
 
     ALGO_LOGGER.log(Level.FINE, "Count of query clusters: {0}", queryClusters.size());
@@ -372,6 +376,15 @@ public class Algo {
 
     Cluster(Set<CType> elements) {
       this();
+
+      if (elements == null) {
+        throw new IllegalArgumentException("Set of elements should not be null");
+      }
+
+      if (elements.isEmpty()) {
+        throw new IllegalArgumentException("Set of elements should not be empty");
+      }
+
       clusteredElements.addAll(elements);
     }
 

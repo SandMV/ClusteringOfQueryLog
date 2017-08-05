@@ -113,7 +113,7 @@ public class DistanceMatrixTree<T> implements DistanceMatrix<T> {
 
   @Override
   public UnorderedPair<T> getPairWithMinDistance() {
-    if (distMatrixPairKey.size() == 0) {
+    if (distMatrixPairKey.isEmpty()) {
       return null;
     }
 
@@ -126,7 +126,7 @@ public class DistanceMatrixTree<T> implements DistanceMatrix<T> {
 
   @Override
   public UnorderedPair<T> getPairWithMaxDistance() {
-    if (distMatrixPairKey.size() == 0) {
+    if (distMatrixPairKey.isEmpty()) {
       return null;
     }
 
@@ -163,7 +163,7 @@ public class DistanceMatrixTree<T> implements DistanceMatrix<T> {
     if (distance != null) {
       Set<UnorderedPair<T>> associatedPairs = distMatrixDistKey.get(distance);
       associatedPairs.remove(pair);
-      if (associatedPairs.size() == 0) {
+      if (associatedPairs.isEmpty()) {
         distMatrixDistKey.remove(distance);
       }
     }

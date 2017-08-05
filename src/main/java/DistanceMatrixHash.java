@@ -87,7 +87,7 @@ public class DistanceMatrixHash<T> implements DistanceMatrix<T> {
 
   @Override
   public UnorderedPair<T> getPairWithMinDistance() {
-    if (distanceMatrix.size() == 0) {
+    if (distanceMatrix.isEmpty()) {
       return null;
     }
     return distanceMatrix
@@ -100,7 +100,7 @@ public class DistanceMatrixHash<T> implements DistanceMatrix<T> {
 
   @Override
   public UnorderedPair<T> getPairWithMaxDistance() {
-    if (distanceMatrix.size() == 0) {
+    if (distanceMatrix.isEmpty()) {
       return null;
     }
     return distanceMatrix
