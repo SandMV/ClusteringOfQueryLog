@@ -49,6 +49,10 @@ public class Algo {
     this.threshold = threshold;
   }
 
+  /**
+   * @param queries is set of queries
+   * @return set of sets (inner sets should be treated as clusters) or null if queries set is null
+   */
   public Set<Set<Query>> clusterQueries(Set<Query> queries) {
     if (queries == null) {
       return null;
