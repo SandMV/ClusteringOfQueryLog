@@ -28,7 +28,7 @@ public class Document {
     if (other == this) {
       return true;
     }
-    
+
     Document otherDocument = (Document) other;
     return documentName.equals(otherDocument.documentName);
   }

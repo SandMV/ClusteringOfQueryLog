@@ -371,7 +371,13 @@ public class Algo {
 
     Cluster(CType element) {
       this();
+
+      if (element == null) {
+        throw new IllegalArgumentException("Clustered elements cannot be null");
+      }
+
       clusteredElements.add(element);
+
     }
 
     Cluster(Set<CType> elements) {
@@ -383,6 +389,10 @@ public class Algo {
 
       if (elements.isEmpty()) {
         throw new IllegalArgumentException("Set of elements should not be empty");
+      }
+
+      if (elements.contains(null)) {
+        throw new IllegalArgumentException("Clustered elements cannot be null");
       }
 
       clusteredElements.addAll(elements);
@@ -417,11 +427,16 @@ public class Algo {
       return newMergedCluster;
     }
 
-    void addNeighbour(Cluster<NType, CType> c, long linksCount) throws IllegalArgumentException {
+    void addNeighbour(Cluster<NType, CType> newNeighbour, long linksCount) {
       if (linksCount < 0) {
         throw new IllegalArgumentException("weight must be greater or equal to zero");
       }
-      Long oldLinksCount = neighbours.put(c, linksCount);
+
+      if (newNeighbour == null) {
+        throw new IllegalArgumentException("Neighbour cannot be null");
+      }
+
+      Long oldLinksCount = neighbours.put(newNeighbour, linksCount);
       totalCountOfLinks -= oldLinksCount == null ? 0 : oldLinksCount;
       totalCountOfLinks += linksCount;
 
